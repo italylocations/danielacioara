@@ -57,6 +57,7 @@ export const translations: Record<string, Record<string, string>> = {
     "journal.label": "Journal",
     "journal.title1": "From the ",
     "journal.title.italic": "studio",
+    "journal.back": "← Back to Journal",
 
     /* Contact */
     "contact.label": "Contact",
@@ -133,6 +134,7 @@ export const translations: Record<string, Record<string, string>> = {
     "journal.label": "Journal",
     "journal.title1": "Dal ",
     "journal.title.italic": "mio studio",
+    "journal.back": "← Torna al Journal",
 
     /* Contact */
     "contact.label": "Contatti",
