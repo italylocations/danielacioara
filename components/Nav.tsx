@@ -52,12 +52,40 @@ export default function Nav() {
           }}
         >
           {/* Logo */}
-          <Link href="/" style={{ textDecoration: "none" }} onClick={closeMenu}>
-            <span
-              className="gm font-cormorant"
-              style={{ fontSize: "1.35rem", fontWeight: 400, letterSpacing: "0.04em" }}
-            >
+          <Link href="/" className="flex flex-col items-center gap-0" style={{ textDecoration: "none" }} onClick={closeMenu}>
+            <span style={{
+              fontFamily: "'Cormorant Garamond', serif",
+              fontSize: '18px',
+              fontWeight: 300,
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              background: 'linear-gradient(105deg,#6B4F1A 0%,#C9A352 18%,#F5D98B 32%,#E8C060 42%,#C9A352 50%,#F0D070 60%,#FFF0A0 68%,#C9A352 78%,#8A6520 88%,#C9A352 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              lineHeight: 1,
+              display: 'block',
+            }}>
               Daniela Cioara
+            </span>
+            <span style={{
+              display: 'block',
+              width: '100%',
+              height: '0.5px',
+              background: 'linear-gradient(90deg, transparent, #C9A352, #F5D98B, #C9A352, transparent)',
+              margin: '5px 0',
+            }} />
+            <span className="nav-logo-sub" style={{
+              fontFamily: "'Cormorant Garamond', serif",
+              fontSize: '7px',
+              fontWeight: 300,
+              letterSpacing: '0.32em',
+              textTransform: 'uppercase',
+              color: 'rgba(201,163,82,0.7)',
+              lineHeight: 1,
+              display: 'block',
+            }}>
+              Makeup Artist · Rome
             </span>
           </Link>
 
@@ -103,13 +131,11 @@ export default function Nav() {
             <LangSwitch lang={lang} setLang={setLang} />
           </div>
 
-          {/* ── Mobile: lang + hamburger ───────────────────────────────── */}
+          {/* ── Mobile: hamburger only ──────────────────────────────────── */}
           <div
             className="flex md:hidden"
-            style={{ alignItems: "center", gap: "1rem" }}
+            style={{ alignItems: "center" }}
           >
-            <LangSwitch lang={lang} setLang={setLang} />
-
             <button
               onClick={() => setOpen((v) => !v)}
               aria-label={open ? "Close menu" : "Open menu"}
@@ -190,7 +216,7 @@ export default function Nav() {
             style={{
               color: "#ede8df",
               textDecoration: "none",
-              fontSize: "2.5rem",
+              fontSize: "32px",
               fontWeight: 300,
               letterSpacing: "0.04em",
               padding: "0.5rem 2rem",
@@ -207,7 +233,7 @@ export default function Nav() {
           className="gm font-cormorant"
           style={{
             textDecoration: "none",
-            fontSize: "2.5rem",
+            fontSize: "32px",
             fontWeight: 300,
             letterSpacing: "0.04em",
             padding: "0.5rem 2rem",
@@ -249,6 +275,12 @@ export default function Nav() {
           ))}
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 767px) {
+          .nav-logo-sub { display: none !important; }
+        }
+      `}</style>
     </>
   );
 }

@@ -129,6 +129,12 @@ export default function Hero() {
           {t("hero.cta")}
         </a>
       </div>
+      {/* ── Responsive ──────────────────────────────────────────────────── */}
+      <style>{`
+        @media (max-width: 767px) {
+          #work h1 { font-size: 32px !important; }
+        }
+      `}</style>
     </section>
   );
 }

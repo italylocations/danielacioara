@@ -20,7 +20,7 @@ const dmSans = DM_Sans({
 const SITE_URL = "https://danielacioara.com";
 
 export const metadata: Metadata = {
-  title: "Daniela Cioara — Makeup Artist Rome",
+  title: "Daniela Cioara | Makeup Artist Rome",
   description:
     "Professional makeup artist based in Rome. Commercial, editorial, private sessions and destination weddings in Italy. Specialist in diverse skin tones and Asian beauty.",
   keywords: [
@@ -38,10 +38,11 @@ export const metadata: Metadata = {
     "makeup for asian skin Rome",
     "Asian beauty makeup artist Italy",
   ],
+  icons: { icon: "/favicon.svg" },
   metadataBase: new URL(SITE_URL),
   alternates: { canonical: "/" },
   openGraph: {
-    title: "Daniela Cioara — Makeup Artist Rome",
+    title: "Daniela Cioara | Makeup Artist Rome",
     description:
       "Professional makeup artist based in Rome. Commercial, editorial, private sessions and destination weddings in Italy. Specialist in diverse skin tones and Asian beauty.",
     type: "website",

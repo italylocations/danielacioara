@@ -14,6 +14,7 @@ const BRANDS = [
 
 const SEP = (
   <span
+    className="ticker-sep"
     style={{
       display: "inline-block",
       width: 4,
@@ -33,6 +34,7 @@ export default function Ticker() {
 
   return (
     <div
+      className="ticker-wrap"
       style={{
         display: "flex",
         alignItems: "stretch",
@@ -44,6 +46,7 @@ export default function Ticker() {
     >
       {/* Label */}
       <div
+        className="ticker-label"
         style={{
           flexShrink: 0,
           backgroundColor: "#0a0a0a",
@@ -76,6 +79,7 @@ export default function Ticker() {
           {items.map((brand, i) => (
             <span key={i} style={{ display: "inline-flex", alignItems: "center" }}>
               <span
+                className="ticker-brand"
                 style={{
                   color: "#0a0a0a",
                   fontSize: "0.75rem",
@@ -92,6 +96,14 @@ export default function Ticker() {
           ))}
         </div>
       </div>
+      <style>{`
+        @media (max-width: 767px) {
+          .ticker-wrap { height: 48px !important; }
+          .ticker-label { padding: 0 1rem !important; font-size: 0.8rem !important; }
+          .ticker-brand { font-size: 0.65rem !important; letter-spacing: 0.1em !important; }
+          .ticker-sep { margin: 0 1rem !important; }
+        }
+      `}</style>
     </div>
   );
 }

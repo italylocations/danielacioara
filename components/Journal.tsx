@@ -129,7 +129,8 @@ export default function Journal({ posts }: Props) {
   return (
     <section
       id="journal"
-      style={{ backgroundColor: "#080808", padding: "7rem 2rem" }}
+      className="journal-section"
+      style={{ backgroundColor: "#080808" }}
     >
       <div style={{ maxWidth: 1280, margin: "0 auto" }}>
         {/* Header */}
@@ -162,13 +163,7 @@ export default function Journal({ posts }: Props) {
 
         {/* Grid */}
         {posts.length > 0 ? (
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(3, 1fr)",
-              gap: "2rem",
-            }}
-          >
+          <div className="journal-grid">
             {posts.map((post) => (
               <PostCard key={post.slug} post={post} />
             ))}
@@ -186,6 +181,19 @@ export default function Journal({ posts }: Props) {
           </p>
         )}
       </div>
+      <style>{`
+        .journal-section { padding: 7rem 2rem; }
+        .journal-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 2rem;
+        }
+
+        @media (max-width: 767px) {
+          .journal-section { padding: 32px 20px; }
+          .journal-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+        }
+      `}</style>
     </section>
   );
 }

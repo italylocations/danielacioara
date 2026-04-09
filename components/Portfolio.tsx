@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Lightbox from "@/components/Lightbox";
 
@@ -29,10 +29,12 @@ function PortfolioItem({
   photo,
   index,
   onClick,
+  mobile,
 }: {
   photo: Photo;
   index: number;
   onClick: (i: number) => void;
+  mobile?: boolean;
 }) {
   const [hovered, setHovered] = useState(false);
 
@@ -49,12 +51,14 @@ function PortfolioItem({
         position: "relative",
         cursor: "pointer",
         overflow: "hidden",
-        /* Gold frame */
         border: "2.5px solid transparent",
         borderImage:
           "linear-gradient(105deg,#6b4f1a,#c9a352,#f5d98b,#c9a352,#fff0a0,#c9a352,#7a5520) 1",
+        ...(mobile
+          ? { width: "85vw", flexShrink: 0, aspectRatio: "4/5", scrollSnapAlign: "center" }
+          : {}),
       }}
-      className="aspect-square md:aspect-[4/5]"
+      className={mobile ? "" : "aspect-square md:aspect-[4/5]"}
     >
       {/* Corner accents */}
       <span className="corner corner-tl" style={{ zIndex: 3 }} />
@@ -68,7 +72,7 @@ function PortfolioItem({
           src={src}
           alt={photo.file.replace(/[-_]/g, " ").replace(/\.jpg$/, "")}
           fill
-          sizes="(max-width: 768px) 50vw, 40vw"
+          sizes={mobile ? "85vw" : "(max-width: 768px) 50vw, 40vw"}
           style={{
             objectFit: "cover",
             objectPosition: "center top",
@@ -111,6 +115,29 @@ function PortfolioItem({
 export default function Portfolio() {
   const { t } = useLanguage();
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const [atEnd, setAtEnd] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  const handleScroll = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setAtEnd(el.scrollLeft + el.clientWidth >= el.scrollWidth - 10);
+  }, []);
+
+  const scrollNext = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const itemWidth = el.clientWidth * 0.85 + 12; // 85vw + gap
+    el.scrollBy({ left: itemWidth, behavior: "smooth" });
+  }, []);
 
   const images = PHOTOS.map((p) => ({
     src: R2_BASE ? `${R2_BASE}/portfolio/${p.file}` : "",
@@ -131,10 +158,13 @@ export default function Portfolio() {
 
   return (
     <>
-      <section id="portfolio" style={{ padding: "6rem 2rem" }}>
+      <section
+        id="portfolio"
+        className="portfolio-section"
+      >
         <div style={{ maxWidth: 1280, margin: "0 auto" }}>
           {/* Header */}
-          <div style={{ marginBottom: "3rem" }}>
+          <div className="portfolio-header">
             <p
               className="gm"
               style={{
@@ -161,23 +191,72 @@ export default function Portfolio() {
             </h2>
           </div>
 
-          {/* Grid 2 colonne */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(2, 1fr)",
-              gap: "1rem",
-            }}
-          >
-            {PHOTOS.map((photo, i) => (
-              <PortfolioItem
-                key={photo.file}
-                photo={photo}
-                index={i}
-                onClick={openLightbox}
-              />
-            ))}
-          </div>
+          {/* Mobile: horizontal scroll */}
+          {isMobile ? (
+            <div style={{ position: "relative" }}>
+              <div
+                ref={scrollRef}
+                onScroll={handleScroll}
+                className="portfolio-scroll"
+                style={{
+                  display: "flex",
+                  overflowX: "scroll",
+                  scrollSnapType: "x mandatory",
+                  gap: 12,
+                  padding: "0 20px",
+                  scrollbarWidth: "none",
+                }}
+              >
+                {PHOTOS.map((photo, i) => (
+                  <PortfolioItem
+                    key={photo.file}
+                    photo={photo}
+                    index={i}
+                    onClick={openLightbox}
+                    mobile
+                  />
+                ))}
+              </div>
+              {/* Invisible next arrow */}
+              {!atEnd && (
+                <button
+                  onClick={scrollNext}
+                  aria-label="Next photo"
+                  style={{
+                    position: "absolute",
+                    right: 0,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    width: 44,
+                    height: 44,
+                    opacity: 0,
+                    cursor: "pointer",
+                    background: "none",
+                    border: "none",
+                    zIndex: 4,
+                  }}
+                />
+              )}
+            </div>
+          ) : (
+            /* Desktop: grid 2 columns */
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(2, 1fr)",
+                gap: "1rem",
+              }}
+            >
+              {PHOTOS.map((photo, i) => (
+                <PortfolioItem
+                  key={photo.file}
+                  photo={photo}
+                  index={i}
+                  onClick={openLightbox}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -191,6 +270,16 @@ export default function Portfolio() {
           onNext={goNext}
         />
       )}
+
+      <style>{`
+        .portfolio-section { padding: 6rem 2rem; }
+        .portfolio-header  { margin-bottom: 3rem; }
+
+        @media (max-width: 767px) {
+          .portfolio-section { padding: 32px 0; }
+          .portfolio-header  { padding: 0 20px; margin-bottom: 1.5rem; }
+        }
+      `}</style>
     </>
   );
 }

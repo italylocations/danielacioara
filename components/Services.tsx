@@ -14,7 +14,7 @@ export default function Services() {
   return (
     <section
       id="services"
-      style={{ padding: "7rem 2rem" }}
+      className="services-section"
     >
       <div style={{ maxWidth: 1280, margin: "0 auto" }}>
         {/* Header */}
@@ -46,19 +46,13 @@ export default function Services() {
         </div>
 
         {/* Grid */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
-            border: "0.5px solid #1a1a1a",
-          }}
-        >
+        <div className="services-grid">
           {SERVICES.map((s, i) => (
             <div
               key={s.num}
+              className="services-card"
               style={{
                 padding: "3rem",
-                borderRight: i < 2 ? "0.5px solid #1a1a1a" : undefined,
                 display: "flex",
                 flexDirection: "column",
                 gap: "1.5rem",
@@ -119,6 +113,23 @@ export default function Services() {
           ))}
         </div>
       </div>
+      <style>{`
+        .services-section { padding: 7rem 2rem; }
+        .services-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          border: 0.5px solid #1a1a1a;
+        }
+        .services-card { border-right: 0.5px solid #1a1a1a; }
+        .services-card:last-child { border-right: none; }
+
+        @media (max-width: 767px) {
+          .services-section { padding: 32px 20px; }
+          .services-grid { grid-template-columns: 1fr; }
+          .services-card { border-right: none; border-bottom: 0.5px solid #1a1a1a; padding: 2rem 1.5rem !important; }
+          .services-card:last-child { border-bottom: none; }
+        }
+      `}</style>
     </section>
   );
 }

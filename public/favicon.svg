@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" fill="#0A0A0A"/>
+  <text x="50%" y="54%"
+    dominant-baseline="middle"
+    text-anchor="middle"
+    font-family="Georgia, serif"
+    font-size="14"
+    font-weight="300"
+    letter-spacing="1"
+    fill="#C9A352">DC</text>
+</svg>

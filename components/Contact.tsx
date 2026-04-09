@@ -79,15 +79,14 @@ export default function Contact() {
   return (
     <section
       id="contact"
-      style={{ backgroundColor: "#080808", padding: "7rem 2rem" }}
+      className="contact-section"
+      style={{ backgroundColor: "#080808" }}
     >
       <div
+        className="contact-grid"
         style={{
           maxWidth: 1280,
           margin: "0 auto",
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "6rem",
           alignItems: "start",
         }}
       >
@@ -314,6 +313,19 @@ export default function Contact() {
           </div>
         </div>
       </div>
+      <style>{`
+        .contact-section { padding: 7rem 2rem; }
+        .contact-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 6rem;
+        }
+
+        @media (max-width: 767px) {
+          .contact-section { padding: 32px 20px; }
+          .contact-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+        }
+      `}</style>
     </section>
   );
 }

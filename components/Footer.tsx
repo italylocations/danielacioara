@@ -15,12 +15,10 @@ export default function Footer() {
       }}
     >
       <div
+        className="footer-inner"
         style={{
           maxWidth: 1280,
           margin: "0 auto",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
         }}
       >
         <Link href="/" style={{ textDecoration: "none" }}>
@@ -66,6 +64,22 @@ export default function Footer() {
           </p>
         </div>
       </div>
+      <style>{`
+        .footer-inner {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        @media (max-width: 767px) {
+          .footer-inner {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+          }
+          .footer-inner > div { flex-wrap: wrap; justify-content: center; gap: 1rem; }
+        }
+      `}</style>
     </footer>
   );
 }
