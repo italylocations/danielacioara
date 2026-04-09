@@ -1,26 +1,157 @@
 @import "tailwindcss";
 
+/* ─── GOLD METALLIC GRADIENT ────────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --gm: linear-gradient(
+    105deg,
+    #6b4f1a 0%,
+    #c9a352 18%,
+    #f5d98b 32%,
+    #e8c060 42%,
+    #c9a352 50%,
+    #f0d070 60%,
+    #fff0a0 68%,
+    #c9a352 78%,
+    #8a6520 88%,
+    #c9a352 100%
+  );
+  --gm-bg: linear-gradient(
+    105deg,
+    #7a5520 0%,
+    #c9a352 12%,
+    #f5d98b 22%,
+    #e2b84a 32%,
+    #c9a352 42%,
+    #f0d070 52%,
+    #fff0a0 60%,
+    #d4a848 70%,
+    #8a6520 82%,
+    #c9a874 90%,
+    #f0d070 100%
+  );
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
   }
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: #0a0a0a;
+    color: #ede8df;
+    font-family: var(--font-dm-sans), "DM Sans", sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+  }
+
+  .font-cormorant {
+    font-family: var(--font-cormorant), "Cormorant Garamond", serif;
+  }
+
+  /* ─── GOLD TEXT ─────────────────────────────────────────────────────────── */
+  .gm {
+    background: var(--gm);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  /* ─── GOLD BACKGROUND ───────────────────────────────────────────────────── */
+  .gm-bg {
+    background: var(--gm-bg);
+  }
+
+  /* ─── GOLD LINE ─────────────────────────────────────────────────────────── */
+  .gm-line {
+    height: 0.5px;
+    background: var(--gm);
+    border: none;
+    width: 100%;
+    display: block;
+  }
+
+  /* ─── GOLD BORDER FRAME ─────────────────────────────────────────────────── */
+  .gm-border {
+    border: 2.5px solid transparent;
+    border-image: linear-gradient(
+        105deg,
+        #6b4f1a,
+        #c9a352,
+        #f5d98b,
+        #c9a352,
+        #fff0a0,
+        #c9a352,
+        #7a5520
+      )
+      1;
+  }
+
+  /* ─── GOLD CORNER ACCENTS ───────────────────────────────────────────────── */
+  .corner {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-color: #f5d98b;
+    border-style: solid;
+    border-width: 0;
+  }
+  .corner-tl {
+    top: -2px;
+    left: -2px;
+    border-top-width: 2px;
+    border-left-width: 2px;
+  }
+  .corner-tr {
+    top: -2px;
+    right: -2px;
+    border-top-width: 2px;
+    border-right-width: 2px;
+  }
+  .corner-bl {
+    bottom: -2px;
+    left: -2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+  }
+  .corner-br {
+    bottom: -2px;
+    right: -2px;
+    border-bottom-width: 2px;
+    border-right-width: 2px;
+  }
+
+  /* ─── TICKER ANIMATION ──────────────────────────────────────────────────── */
+  @keyframes ticker {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+  .ticker-track {
+    animation: ticker 18s linear infinite;
+    will-change: transform;
+    display: flex;
+    white-space: nowrap;
+  }
+
+  /* ─── INPUTS ────────────────────────────────────────────────────────────── */
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: none;
+    border-bottom-color: #c9a352 !important;
+  }
 }
