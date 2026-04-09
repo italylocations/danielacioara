@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { getPostBySlug, getAllPosts, formatDate } from "@/lib/blog";
+import VideoBreak from "@/components/VideoBreak";
 import type { JSX } from "react";
 
 interface Props {
@@ -146,7 +147,9 @@ const mdxComponents = {
       {children}
     </em>
   ),
-} as Record<string, (props: { children?: React.ReactNode }) => JSX.Element>;
+  VideoBreak: ({ src }: { src: string }) => <VideoBreak src={src} />,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+} as any;
 
 /* ── Page ─────────────────────────────────────────────────────────────────── */
 export default async function ArticlePage({ params }: Props) {
