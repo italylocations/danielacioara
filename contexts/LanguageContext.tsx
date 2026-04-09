@@ -30,8 +30,7 @@ function detect(): Lang {
   if (typeof window === "undefined") return "en";
   const stored = localStorage.getItem("lang") as Lang | null;
   if (stored === "en" || stored === "it") return stored;
-  const browser = navigator.language.toLowerCase();
-  return browser.startsWith("it") ? "it" : "en";
+  return "en";
 }
 
 export function LanguageProvider({ children }: { children: ReactNode }) {

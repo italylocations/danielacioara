@@ -3,7 +3,6 @@ import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
 import Ticker from "@/components/Ticker";
 import Portfolio from "@/components/Portfolio";
-import AsiaBreak from "@/components/AsiaBreak";
 import About from "@/components/About";
 import Services from "@/components/Services";
 import Journal from "@/components/Journal";
@@ -21,7 +20,6 @@ export default function HomePage() {
         <Hero />
         <Ticker />
         <Portfolio />
-        <AsiaBreak />
         <About />
         <Services />
         <Journal posts={posts} />

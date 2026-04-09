@@ -34,7 +34,6 @@ function PortfolioItem({
   index: number;
   onClick: (i: number) => void;
 }) {
-  const { t } = useLanguage();
   const [hovered, setHovered] = useState(false);
 
   const src = R2_BASE
@@ -67,7 +66,7 @@ function PortfolioItem({
       {src ? (
         <Image
           src={src}
-          alt={t(photo.catKey)}
+          alt={photo.file.replace(/[-_]/g, " ").replace(/\.jpg$/, "")}
           fill
           sizes="(max-width: 768px) 50vw, 40vw"
           style={{
@@ -100,27 +99,11 @@ function PortfolioItem({
           position: "absolute",
           inset: 0,
           backgroundColor: "rgba(0,0,0,0.5)",
-          display: "flex",
-          alignItems: "flex-end",
-          padding: "1.25rem",
           opacity: hovered ? 1 : 0,
           transition: "opacity 0.3s ease",
           zIndex: 2,
         }}
-      >
-        <span
-          style={{
-            color: "#ede8df",
-            fontSize: "0.68rem",
-            letterSpacing: "0.14em",
-            textTransform: "uppercase",
-            fontFamily: "var(--font-dm-sans), sans-serif",
-            fontWeight: 300,
-          }}
-        >
-          {t(photo.catKey)}
-        </span>
-      </div>
+      />
     </div>
   );
 }

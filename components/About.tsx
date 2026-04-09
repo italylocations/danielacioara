@@ -64,6 +64,7 @@ export default function About() {
             objectPosition: "center",
           }}
         >
+          <source src="/hero2-mobile.mp4" media="(max-width: 767px)" type="video/mp4" />
           <source src="/hero2.mp4" type="video/mp4" />
         </video>
 
@@ -179,6 +180,26 @@ export default function About() {
         </div>
       </div>
 
+      {/* ── Video hero-asia.mp4 — chiude la sezione ────────────────────── */}
+      <div style={{ borderTop: "0.5px solid #1A1A1A" }}>
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="about-asia-video"
+          style={{
+            display: "block",
+            width: "100%",
+            height: "60vh",
+            objectFit: "cover",
+          }}
+        >
+          <source src="/hero-asia-mobile.mp4" media="(max-width: 767px)" type="video/mp4" />
+          <source src="/hero-asia.mp4" type="video/mp4" />
+        </video>
+      </div>
+
       {/* ── Responsive ──────────────────────────────────────────────────── */}
       <style>{`
         .about-quote-text { font-size: 46px; }
@@ -188,6 +209,7 @@ export default function About() {
         @media (max-width: 767px) {
           .about-quote-text { font-size: 28px; }
           .about-bio-outer  { padding: 32px 24px; }
+          .about-asia-video { height: 45vh !important; }
         }
       `}</style>
     </section>

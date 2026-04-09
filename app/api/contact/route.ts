@@ -1,27 +1,112 @@
 import { NextRequest, NextResponse } from "next/server";
+import fs from "fs";
+import path from "path";
+
+/* ── Rate limiting (in-memory, per-instance) ─────────────────────────── */
+const hits = new Map<string, number[]>();
+const RATE_WINDOW = 10 * 60 * 1000; // 10 minutes
+const RATE_MAX = 3;
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const timestamps = (hits.get(ip) ?? []).filter((t) => now - t < RATE_WINDOW);
+  if (timestamps.length >= RATE_MAX) {
+    hits.set(ip, timestamps);
+    return true;
+  }
+  timestamps.push(now);
+  hits.set(ip, timestamps);
+  return false;
+}
+
+/* ── Email regex ─────────────────────────────────────────────────────── */
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(req: NextRequest) {
   try {
-    const { name, email, project, message } = await req.json();
+    const body = await req.json();
 
-    if (!name || !email || !message) {
-      return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+    /* Honeypot — silent reject */
+    if (body.website) {
+      return NextResponse.json({ ok: true }, { status: 200 });
+    }
+
+    /* Rate limiting */
+    const ip =
+      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+    if (isRateLimited(ip)) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        { status: 429 },
+      );
+    }
+
+    const { name, email, project, message } = body;
+
+    /* Validation */
+    if (!name || typeof name !== "string" || name.trim().length < 2) {
+      return NextResponse.json(
+        { error: "Name must be at least 2 characters." },
+        { status: 400 },
+      );
+    }
+    if (!email || typeof email !== "string" || !EMAIL_RE.test(email.trim())) {
+      return NextResponse.json(
+        { error: "Please enter a valid email address." },
+        { status: 400 },
+      );
+    }
+    if (
+      !message ||
+      typeof message !== "string" ||
+      message.trim().length < 10
+    ) {
+      return NextResponse.json(
+        { error: "Message must be at least 10 characters." },
+        { status: 400 },
+      );
     }
 
     const resendKey = process.env.RESEND_API_KEY;
+
+    /* ── No API key: fallback ─────────────────────────────────────────── */
     if (!resendKey) {
-      console.error("RESEND_API_KEY not set");
-      return NextResponse.json({ error: "Server misconfiguration" }, { status: 500 });
+      const isDev = process.env.NODE_ENV === "development";
+
+      if (isDev) {
+        const filePath = path.join(process.cwd(), "submissions.json");
+        const existing = fs.existsSync(filePath)
+          ? JSON.parse(fs.readFileSync(filePath, "utf-8"))
+          : [];
+        existing.push({
+          name: name.trim(),
+          email: email.trim(),
+          project: project || "—",
+          message: message.trim(),
+          date: new Date().toISOString(),
+          ip,
+        });
+        fs.writeFileSync(filePath, JSON.stringify(existing, null, 2));
+        return NextResponse.json({ ok: true });
+      }
+
+      /* Production without key */
+      return NextResponse.json({
+        ok: true,
+        fallback: true,
+        message:
+          "Thank you — please contact us directly at daniela@danielacioara.com",
+      });
     }
 
+    /* ── Send via Resend ──────────────────────────────────────────────── */
     const html = `
-      <p><strong>From:</strong> ${name} &lt;${email}&gt;</p>
+      <p><strong>From:</strong> ${name.trim()} &lt;${email.trim()}&gt;</p>
       <p><strong>Project type:</strong> ${project || "—"}</p>
       <hr />
-      <p>${message.replace(/\n/g, "<br>")}</p>
+      <p>${message.trim().replace(/\n/g, "<br>")}</p>
     `;
 
-    // Send to admin
     const adminRes = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -31,9 +116,9 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({
         from: "website@danielacioara.com",
         to: ["daniela@danielacioara.com"],
-        subject: `New inquiry from ${name} — ${project || "Website"}`,
+        subject: `New inquiry from ${name.trim()} — ${project || "Website"}`,
         html,
-        reply_to: email,
+        reply_to: email.trim(),
       }),
     });
 
@@ -43,7 +128,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Email failed" }, { status: 500 });
     }
 
-    // Send confirmation to sender
+    // Confirmation to sender
     await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -52,10 +137,10 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({
         from: "daniela@danielacioara.com",
-        to: [email],
+        to: [email.trim()],
         subject: "Thank you for reaching out — Daniela Cioara",
         html: `
-          <p>Dear ${name},</p>
+          <p>Dear ${name.trim()},</p>
           <p>Thank you for your inquiry. I have received your message and will be in touch shortly.</p>
           <p>Warmly,<br>Daniela Cioara</p>
         `,

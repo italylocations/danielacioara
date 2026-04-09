@@ -1,4 +1,4 @@
-export default function VideoBreak({ src }: { src: string }) {
+export default function VideoBreak({ src, mobileSrc }: { src: string; mobileSrc?: string }) {
   return (
     <div
       style={{
@@ -13,14 +13,18 @@ export default function VideoBreak({ src }: { src: string }) {
         muted
         loop
         playsInline
-        src={src}
         style={{
           display: "block",
           width: "100%",
           aspectRatio: "16/9",
           objectFit: "cover",
         }}
-      />
+      >
+        {mobileSrc && (
+          <source src={mobileSrc} media="(max-width: 767px)" type="video/mp4" />
+        )}
+        <source src={src} type="video/mp4" />
+      </video>
     </div>
   );
 }

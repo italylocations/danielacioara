@@ -1,9 +1,6 @@
 "use client";
 
-import Image from "next/image";
 import { useLanguage } from "@/contexts/LanguageContext";
-
-const R2_BASE = process.env.NEXT_PUBLIC_R2_PUBLIC_URL ?? "";
 
 export default function Hero() {
   const { t } = useLanguage();
@@ -18,13 +15,12 @@ export default function Hero() {
         backgroundColor: "#0a0a0a",
       }}
     >
-      {/* ── Video (desktop) ──────────────────────────────────────────────── */}
+      {/* ── Video (mobile + desktop) ─────────────────────────────────────── */}
       <video
         autoPlay
         muted
         loop
         playsInline
-        className="hidden md:block"
         style={{
           position: "absolute",
           inset: 0,
@@ -34,26 +30,9 @@ export default function Hero() {
           objectPosition: "center",
         }}
       >
+        <source src="/hero-mobile.mp4" media="(max-width: 767px)" type="video/mp4" />
         <source src="/hero.mp4" type="video/mp4" />
       </video>
-
-      {/* ── Foto fallback (mobile) ────────────────────────────────────────── */}
-      <div
-        className="block md:hidden"
-        style={{ position: "absolute", inset: 0 }}
-      >
-        {R2_BASE ? (
-          <Image
-            src={`${R2_BASE}/portfolio/daniela-cioara-makeup-16.jpg`}
-            alt="Daniela Cioara makeup artist"
-            fill
-            priority
-            style={{ objectFit: "cover", objectPosition: "center top" }}
-          />
-        ) : (
-          <div style={{ width: "100%", height: "100%", backgroundColor: "#111" }} />
-        )}
-      </div>
 
       {/* ── Overlay scuro ────────────────────────────────────────────────── */}
       <div

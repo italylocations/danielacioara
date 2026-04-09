@@ -12,7 +12,8 @@ const PROJECT_TYPES = [
 
 export default function Contact() {
   const { t } = useLanguage();
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "fallback" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -35,14 +36,20 @@ export default function Contact() {
           email: form.email,
           project: form.project,
           message: form.message,
+          website: form.honeypot,
         }),
       });
-      if (res.ok) {
-        setStatus("sent");
-      } else {
+      const data = await res.json();
+      if (!res.ok) {
+        setErrorMsg(data.error || "Something went wrong.");
         setStatus("error");
+      } else if (data.fallback) {
+        setStatus("fallback");
+      } else {
+        setStatus("sent");
       }
     } catch {
+      setErrorMsg("Something went wrong. Please try again or email directly.");
       setStatus("error");
     }
   }
@@ -113,7 +120,7 @@ export default function Contact() {
             {t("contact.title2")}
           </h2>
 
-          {status === "sent" ? (
+          {status === "sent" || status === "fallback" ? (
             <p
               className="font-cormorant"
               style={{
@@ -122,7 +129,9 @@ export default function Contact() {
                 fontStyle: "italic",
               }}
             >
-              Thank you — I will be in touch soon.
+              {status === "fallback"
+                ? "Thank you — please contact us directly at daniela@danielacioara.com"
+                : "Thank you — I will be in touch soon."}
             </p>
           ) : (
             <form onSubmit={handleSubmit}>
@@ -219,7 +228,7 @@ export default function Contact() {
 
                 {status === "error" && (
                   <p style={{ color: "#c9a352", fontSize: "0.8rem" }}>
-                    Something went wrong. Please try again or email directly.
+                    {errorMsg}
                   </p>
                 )}
               </div>
