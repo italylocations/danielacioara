@@ -73,7 +73,7 @@ export default function About() {
           style={{
             position: "absolute",
             inset: 0,
-            backgroundColor: "rgba(0,0,0,0.45)",
+            backgroundColor: "rgba(0,0,0,0.38)",
           }}
         />
 
@@ -109,6 +109,7 @@ export default function About() {
               fontWeight: 300,
               color: "#ede8df",
               lineHeight: 1.12,
+              textShadow: "0 2px 20px rgba(0,0,0,0.5)",
             }}
           >
             {quoteParts[0]}

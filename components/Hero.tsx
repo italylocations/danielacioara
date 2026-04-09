@@ -2,12 +2,15 @@
 
 import { useLanguage } from "@/contexts/LanguageContext";
 
+const TEXT_SHADOW = "0 2px 20px rgba(0,0,0,0.5)";
+
 export default function Hero() {
   const { t } = useLanguage();
 
   return (
     <section
       id="work"
+      className="hero-section"
       style={{
         position: "relative",
         height: "100vh",
@@ -21,6 +24,7 @@ export default function Hero() {
         muted
         loop
         playsInline
+        className="hero-video"
         style={{
           position: "absolute",
           inset: 0,
@@ -36,16 +40,18 @@ export default function Hero() {
 
       {/* ── Overlay scuro ────────────────────────────────────────────────── */}
       <div
+        className="hero-overlay"
         style={{
           position: "absolute",
           inset: 0,
-          backgroundColor: "rgba(0,0,0,0.55)",
+          backgroundColor: "rgba(0,0,0,0.38)",
           zIndex: 1,
         }}
       />
 
       {/* ── Contenuto centrato ───────────────────────────────────────────── */}
       <div
+        className="hero-content"
         style={{
           position: "absolute",
           inset: 0,
@@ -68,6 +74,7 @@ export default function Hero() {
             textTransform: "uppercase",
             fontFamily: "var(--font-dm-sans), sans-serif",
             fontWeight: 300,
+            textShadow: TEXT_SHADOW,
           }}
         >
           Makeup Artist · Rome, Italy
@@ -82,6 +89,7 @@ export default function Hero() {
             lineHeight: 1.1,
             color: "#ede8df",
             maxWidth: "820px",
+            textShadow: TEXT_SHADOW,
           }}
         >
           {t("hero.title1")}
@@ -100,6 +108,7 @@ export default function Hero() {
             color: "rgba(237,232,223,0.45)",
             fontFamily: "var(--font-dm-sans), sans-serif",
             fontWeight: 300,
+            textShadow: TEXT_SHADOW,
           }}
         >
           {t("hero.sub")}
@@ -122,6 +131,7 @@ export default function Hero() {
             fontFamily: "var(--font-dm-sans), sans-serif",
             fontWeight: 300,
             transition: "opacity 0.2s",
+            textShadow: TEXT_SHADOW,
           }}
           onMouseEnter={(e) => ((e.target as HTMLElement).style.opacity = "0.7")}
           onMouseLeave={(e) => ((e.target as HTMLElement).style.opacity = "1")}
@@ -129,10 +139,20 @@ export default function Hero() {
           {t("hero.cta")}
         </a>
       </div>
+
       {/* ── Responsive ──────────────────────────────────────────────────── */}
       <style>{`
         @media (max-width: 767px) {
-          #work h1 { font-size: 32px !important; }
+          .hero-section { height: 100svh !important; }
+          .hero-video { object-position: 60% center !important; }
+          .hero-overlay { background-color: rgba(0,0,0,0.32) !important; }
+          .hero-content {
+            justify-content: flex-start !important;
+            padding-top: 35vh !important;
+            padding-left: 24px !important;
+            padding-right: 24px !important;
+          }
+          #work h1 { font-size: 28px !important; }
         }
       `}</style>
     </section>
