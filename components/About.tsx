@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 /* ── Highlight helper ─────────────────────────────────────────────────────── */
@@ -126,58 +127,117 @@ export default function About() {
         </div>
       </div>
 
-      {/* ── PARTE 2: Solo testo bio ──────────────────────────────────────── */}
+      {/* ── PARTE 2: Grid bio + portrait ──────────────────────────────── */}
       <div
         style={{ backgroundColor: "#080808" }}
         className="about-bio-outer"
       >
         <div
-          style={{ maxWidth: 720, margin: "0 auto" }}
-          className="about-bio-inner"
+          style={{ maxWidth: 900, margin: "0 auto" }}
+          className="about-bio-grid"
         >
-          <p
-            className="gm"
-            style={{
-              fontSize: "0.68rem",
-              letterSpacing: "0.18em",
-              textTransform: "uppercase",
-              marginBottom: "2.25rem",
-            }}
-          >
-            {t("about.label")}
-          </p>
-
-          {(["body1", "body2", "body3"] as const).map((k) => (
+          {/* Colonna sinistra — testo bio */}
+          <div className="about-bio-text">
             <p
-              key={k}
+              className="gm"
               style={{
-                color: "rgba(237,232,223,0.5)",
-                fontSize: 13,
-                lineHeight: 1.95,
-                marginBottom: "1.35rem",
+                fontSize: "0.68rem",
+                letterSpacing: "0.18em",
+                textTransform: "uppercase",
+                marginBottom: "2.25rem",
               }}
             >
-              {highlight(t(`about.${k}`))}
+              {t("about.label")}
             </p>
-          ))}
 
-          <span
-            className="gm-line"
-            style={{ width: 36, display: "block", margin: "2rem 0 1.5rem" }}
-          />
+            {(["body1", "body2", "body3"] as const).map((k) => (
+              <p
+                key={k}
+                style={{
+                  color: "rgba(237,232,223,0.55)",
+                  fontSize: 13.5,
+                  lineHeight: 2,
+                  marginBottom: "1.35rem",
+                }}
+              >
+                {highlight(t(`about.${k}`))}
+              </p>
+            ))}
 
-          <a
-            href="#contact"
-            className="gm"
+            <span
+              className="gm-line"
+              style={{ width: 36, display: "block", margin: "2rem 0 1.5rem" }}
+            />
+
+            <a
+              href="#contact"
+              className="gm"
+              style={{
+                textDecoration: "none",
+                fontSize: "0.82rem",
+                letterSpacing: "0.08em",
+                fontWeight: 300,
+              }}
+            >
+              {t("about.cta")}
+            </a>
+          </div>
+
+          {/* Colonna destra — foto + didascalia */}
+          <div
+            className="about-portrait-col"
             style={{
-              textDecoration: "none",
-              fontSize: "0.82rem",
-              letterSpacing: "0.08em",
-              fontWeight: 300,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 12,
             }}
           >
-            {t("about.cta")}
-          </a>
+            <div className="about-portrait-frame">
+              <Image
+                src={`${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/portrait/daniela-portrait-opt.jpg`}
+                alt="Daniela Cioara — Makeup Artist"
+                width={260}
+                height={347}
+                style={{
+                  width: "100%",
+                  height: "auto",
+                  aspectRatio: "3/4",
+                  objectFit: "cover",
+                  objectPosition: "top center",
+                  display: "block",
+                }}
+              />
+            </div>
+            <div style={{ textAlign: "center" }}>
+              <span
+                className="gm-line"
+                style={{ width: 30, display: "block", margin: "0 auto 10px" }}
+              />
+              <p
+                className="font-cormorant gm"
+                style={{
+                  fontSize: 13,
+                  fontWeight: 300,
+                  letterSpacing: "0.15em",
+                  marginBottom: 4,
+                }}
+              >
+                Daniela Cioara
+              </p>
+              <p
+                style={{
+                  fontFamily: "var(--font-dm-sans), sans-serif",
+                  fontSize: 9,
+                  letterSpacing: "0.25em",
+                  textTransform: "uppercase",
+                  color: "rgba(237,232,223,0.4)",
+                }}
+              >
+                Makeup Artist
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -205,12 +265,34 @@ export default function About() {
       <style>{`
         .about-quote-text { font-size: 46px; }
         .about-bio-outer  { padding: 50px 44px; }
-        .about-bio-inner  {}
+        .about-bio-grid {
+          display: grid;
+          grid-template-columns: 1.4fr 1fr;
+          gap: 48px;
+          align-items: start;
+        }
+        .about-portrait-frame {
+          max-width: 260px;
+          padding: 6px;
+          position: relative;
+          border: 0.5px solid rgba(193,163,98,0.25);
+          background:
+            linear-gradient(135deg, rgba(193,163,98,0.5) 0%, transparent 20%),
+            linear-gradient(225deg, rgba(193,163,98,0.5) 0%, transparent 20%),
+            linear-gradient(315deg, rgba(193,163,98,0.5) 0%, transparent 20%),
+            linear-gradient(45deg,  rgba(193,163,98,0.5) 0%, transparent 20%);
+        }
 
         @media (max-width: 767px) {
           .about-quote-text { font-size: 28px; }
           .about-bio-outer  { padding: 32px 24px; }
           .about-asia-video { height: 45vh !important; }
+          .about-bio-grid {
+            grid-template-columns: 1fr;
+            gap: 32px;
+          }
+          .about-portrait-col { order: -1; }
+          .about-portrait-frame { max-width: 180px; }
         }
       `}</style>
     </section>

@@ -41,6 +41,26 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    /* Turnstile verification */
+    const turnstileRes = await fetch(
+      "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          secret: process.env.TURNSTILE_SECRET_KEY,
+          response: body.turnstileToken,
+        }),
+      },
+    );
+    const turnstileData = await turnstileRes.json();
+    if (!turnstileData.success) {
+      return NextResponse.json(
+        { error: "Verifica anti-spam fallita" },
+        { status: 400 },
+      );
+    }
+
     const { name, email, project, message } = body;
 
     /* Validation */

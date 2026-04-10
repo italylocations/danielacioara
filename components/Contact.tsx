@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, FormEvent } from "react";
+import { Turnstile } from "@marsidev/react-turnstile";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const PROJECT_TYPES = [
@@ -14,6 +15,7 @@ export default function Contact() {
   const { t } = useLanguage();
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "fallback" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -37,6 +39,7 @@ export default function Contact() {
           project: form.project,
           message: form.message,
           website: form.honeypot,
+          turnstileToken,
         }),
       });
       const data = await res.json();
@@ -203,14 +206,22 @@ export default function Contact() {
                   />
                 </div>
 
+                <Turnstile
+                  siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+                  onSuccess={(token) => setTurnstileToken(token)}
+                  onError={() => setTurnstileToken(null)}
+                  onExpire={() => setTurnstileToken(null)}
+                  options={{ theme: "dark" }}
+                />
+
                 <div>
                   <button
                     type="submit"
-                    disabled={status === "sending"}
+                    disabled={status === "sending" || !turnstileToken}
                     className="gm-bg"
                     style={{
                       border: "none",
-                      cursor: status === "sending" ? "wait" : "pointer",
+                      cursor: status === "sending" || !turnstileToken ? "not-allowed" : "pointer",
                       padding: "0.875rem 2.5rem",
                       fontSize: "0.75rem",
                       letterSpacing: "0.12em",
@@ -218,7 +229,7 @@ export default function Contact() {
                       color: "#0a0a0a",
                       fontFamily: "var(--font-dm-sans), sans-serif",
                       fontWeight: 400,
-                      opacity: status === "sending" ? 0.7 : 1,
+                      opacity: status === "sending" || !turnstileToken ? 0.7 : 1,
                     }}
                   >
                     {status === "sending" ? "..." : t("contact.send")}
