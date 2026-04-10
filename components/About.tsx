@@ -170,7 +170,7 @@ export default function About() {
             />
 
             <a
-              href="#contact"
+              href="/about"
               className="gm"
               style={{
                 textDecoration: "none",

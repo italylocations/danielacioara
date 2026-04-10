@@ -36,7 +36,7 @@ export const translations: Record<string, Record<string, string>> = {
       "I enhance what's already there — refining, brightening, bringing a new light to the skin without erasing what makes each face unique. My work with diverse skin tones and features — including Asian beauty — reflects a deep respect for natural individuality. I work exclusively with Chanel, Dior, Giorgio Armani Beauty and other premium brands — because quality is never a detail.",
     "about.body3":
       "I work slowly, intentionally. With clients who value time — at least 75 minutes — to build from the inside out: a Korean-inspired skincare base, then layer by layer, the perfect look for the most important moments.",
-    "about.cta": "Work with me →",
+    "about.cta": "Full story →",
 
     /* Services */
     "services.label": "Services",
@@ -113,7 +113,7 @@ export const translations: Record<string, Record<string, string>> = {
       "Il mio lavoro è esaltare ciò che c'è già — raffinare, illuminare, dare nuova luce alla pelle senza stravolgere ciò che rende unico ogni viso. Lavoro con carnagioni e tratti diversi — inclusa la bellezza asiatica — con rispetto profondo per l'individualità naturale. Lavoro solo con Chanel, Dior, Giorgio Armani Beauty e altri brand di alta gamma — perché la qualità si vede, sempre.",
     "about.body3":
       "Lavoro con calma e attenzione. Con clienti che mi concedono almeno 75 minuti per iniziare dalla skincare — come nella routine coreana — e costruire poi, strato dopo strato, il trucco giusto per ogni occasione importante.",
-    "about.cta": "Lavora con me →",
+    "about.cta": "La mia storia →",
 
     /* Services */
     "services.label": "Servizi",

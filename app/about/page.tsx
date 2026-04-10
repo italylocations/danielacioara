@@ -77,23 +77,32 @@ export default function AboutPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* ── 1. HERO ──────────────────────────────────────────────────────── */}
+      {/* ── 1. HERO — video ─────────────────────────────────────────────── */}
       <section
         style={{
           position: "relative",
           width: "100%",
-          height: "70vh",
+          height: "80vh",
           overflow: "hidden",
           marginTop: 72,
         }}
       >
-        <Image
-          src={`${R2}/portrait/daniela-portrait-opt.jpg`}
-          alt="Daniela Cioara — Makeup Artist Rome"
-          fill
-          priority
-          style={{ objectFit: "cover", objectPosition: "top" }}
-        />
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+          }}
+        >
+          <source src="/hero-asia-mobile.mp4" media="(max-width: 767px)" type="video/mp4" />
+          <source src="/hero-asia.mp4" type="video/mp4" />
+        </video>
         <div
           style={{
             position: "absolute",
@@ -149,6 +158,50 @@ export default function AboutPage() {
         style={{ backgroundColor: "#080808" }}
       >
         <div style={{ maxWidth: 760, margin: "0 auto" }}>
+          {/* Portrait — float right on desktop, centered block on mobile */}
+          <div className="about-page-portrait">
+            <div className="about-page-portrait-frame">
+              <Image
+                src={`${R2}/portrait/daniela-portrait-opt.jpg`}
+                alt="Daniela Cioara — Makeup Artist Rome"
+                width={200}
+                height={267}
+                style={{
+                  width: "100%",
+                  height: "auto",
+                  aspectRatio: "3/4",
+                  objectFit: "cover",
+                  objectPosition: "top center",
+                  display: "block",
+                }}
+              />
+            </div>
+            <div style={{ textAlign: "center", marginTop: 8 }}>
+              <p
+                className="font-cormorant gm"
+                style={{
+                  fontSize: 11,
+                  fontWeight: 300,
+                  letterSpacing: "0.15em",
+                  marginBottom: 3,
+                }}
+              >
+                Daniela Cioara
+              </p>
+              <p
+                style={{
+                  fontFamily: "var(--font-dm-sans), sans-serif",
+                  fontSize: 8,
+                  letterSpacing: "0.25em",
+                  textTransform: "uppercase",
+                  color: "rgba(237,232,223,0.4)",
+                }}
+              >
+                Makeup Artist · Rome
+              </p>
+            </div>
+          </div>
+
           <p style={paraStyle}>
             Daniela Cioara is a professional makeup artist based in Rome, with
             over eight years of experience working across commercial
@@ -333,6 +386,21 @@ export default function AboutPage() {
         .about-page-bts { padding: 48px 44px 80px; }
         .about-page-cta { padding: 80px 44px; }
 
+        .about-page-portrait {
+          float: right;
+          max-width: 200px;
+          margin: 0 0 24px 32px;
+        }
+        .about-page-portrait-frame {
+          padding: 6px;
+          border: 0.5px solid rgba(193,163,98,0.25);
+          background:
+            linear-gradient(135deg, rgba(193,163,98,0.5) 0%, transparent 20%),
+            linear-gradient(225deg, rgba(193,163,98,0.5) 0%, transparent 20%),
+            linear-gradient(315deg, rgba(193,163,98,0.5) 0%, transparent 20%),
+            linear-gradient(45deg,  rgba(193,163,98,0.5) 0%, transparent 20%);
+        }
+
         .about-page-link {
           text-decoration: none;
         }
@@ -360,6 +428,11 @@ export default function AboutPage() {
           .about-page-bio { padding: 48px 24px; }
           .about-page-bts { padding: 32px 24px 48px; }
           .about-page-cta { padding: 48px 24px; }
+          .about-page-portrait {
+            float: none;
+            max-width: 160px;
+            margin: 0 auto 32px;
+          }
           .about-page-bts-grid {
             grid-template-columns: repeat(2, 1fr);
           }
