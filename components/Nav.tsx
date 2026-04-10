@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-const NAV_LINKS = ["work", "about", "services", "journal"] as const;
+
 
 export default function Nav() {
   const { t, lang, setLang } = useLanguage();
@@ -24,6 +24,27 @@ export default function Nav() {
   }, [open]);
 
   const closeMenu = () => setOpen(false);
+
+  const desktopLinkStyle: React.CSSProperties = {
+    color: "rgba(237,232,223,0.65)",
+    textDecoration: "none",
+    fontSize: "0.8rem",
+    letterSpacing: "0.08em",
+    textTransform: "uppercase",
+    fontWeight: 300,
+    transition: "color 0.2s",
+  };
+
+  const mobileLinkStyle: React.CSSProperties = {
+    color: "#ede8df",
+    textDecoration: "none",
+    fontSize: "32px",
+    fontWeight: 300,
+    letterSpacing: "0.04em",
+    padding: "0.5rem 2rem",
+    display: "block",
+    textAlign: "center",
+  };
 
   return (
     <>
@@ -94,19 +115,27 @@ export default function Nav() {
             className="hidden md:flex"
             style={{ alignItems: "center", gap: "2.5rem" }}
           >
-            {NAV_LINKS.map((k) => (
+            <a
+              href="#work"
+              style={desktopLinkStyle}
+              onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "#ede8df")}
+              onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(237,232,223,0.65)")}
+            >
+              {t("nav.work")}
+            </a>
+            <Link
+              href="/about"
+              style={desktopLinkStyle}
+              onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "#ede8df")}
+              onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(237,232,223,0.65)")}
+            >
+              {t("nav.about")}
+            </Link>
+            {(["services", "journal"] as const).map((k) => (
               <a
                 key={k}
                 href={`#${k}`}
-                style={{
-                  color: "rgba(237,232,223,0.65)",
-                  textDecoration: "none",
-                  fontSize: "0.8rem",
-                  letterSpacing: "0.08em",
-                  textTransform: "uppercase",
-                  fontWeight: 300,
-                  transition: "color 0.2s",
-                }}
+                style={desktopLinkStyle}
                 onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "#ede8df")}
                 onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(237,232,223,0.65)")}
               >
@@ -207,22 +236,29 @@ export default function Nav() {
           pointerEvents: open ? "auto" : "none",
         }}
       >
-        {NAV_LINKS.map((k) => (
+        <a
+          href="#work"
+          onClick={closeMenu}
+          className="font-cormorant"
+          style={mobileLinkStyle}
+        >
+          {t("nav.work")}
+        </a>
+        <Link
+          href="/about"
+          onClick={closeMenu}
+          className="font-cormorant"
+          style={mobileLinkStyle}
+        >
+          {t("nav.about")}
+        </Link>
+        {(["services", "journal"] as const).map((k) => (
           <a
             key={k}
             href={`#${k}`}
             onClick={closeMenu}
             className="font-cormorant"
-            style={{
-              color: "#ede8df",
-              textDecoration: "none",
-              fontSize: "32px",
-              fontWeight: 300,
-              letterSpacing: "0.04em",
-              padding: "0.5rem 2rem",
-              display: "block",
-              textAlign: "center",
-            }}
+            style={mobileLinkStyle}
           >
             {t(`nav.${k}`)}
           </a>
