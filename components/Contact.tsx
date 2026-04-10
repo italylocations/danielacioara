@@ -63,7 +63,7 @@ export default function Contact() {
     border: "none",
     borderBottom: "0.5px solid rgba(237,232,223,0.2)",
     padding: "0.75rem 0",
-    color: "#ede8df",
+    color: "#EDE8DF",
     fontSize: "0.875rem",
     fontFamily: "var(--font-dm-sans), sans-serif",
     fontWeight: 300,
@@ -75,7 +75,7 @@ export default function Contact() {
     fontSize: "0.7rem",
     letterSpacing: "0.12em",
     textTransform: "uppercase",
-    color: "rgba(237,232,223,0.4)",
+    color: "rgba(237,232,223,0.65)",
     marginBottom: "0.25rem",
   };
 
@@ -355,6 +355,13 @@ export default function Contact() {
           display: grid;
           grid-template-columns: 1fr 1fr;
           gap: 6rem;
+        }
+
+        .contact-section input::placeholder,
+        .contact-section textarea::placeholder,
+        .contact-section select:invalid {
+          color: rgba(237,232,223,0.35) !important;
+          opacity: 1;
         }
 
         @media (max-width: 767px) {
