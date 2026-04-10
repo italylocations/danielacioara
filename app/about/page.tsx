@@ -11,11 +11,11 @@ export const metadata = {
 
 const BTS_IMAGES = [
   "daniela-cioara-makeup-8.jpg",
-  "daniela-cioara-makeup-9.jpg",
   "daniela-cioara-makeup-13.jpg",
   "daniela-cioara-makeup-14.jpg",
   "daniela-cioara-makeup-15.jpg",
   "daniela-cioara-makeup-25.jpg",
+  "daniela-cioara-makeup-9.jpg",
 ];
 
 export default function AboutPage() {
