@@ -92,6 +92,18 @@ export default function Footer() {
             {t("footer.copy")}
           </p>
         </div>
+
+        <p
+          style={{
+            color: "rgba(237,232,223,0.18)",
+            fontSize: "10px",
+            marginTop: "0.75rem",
+            textAlign: "center",
+            width: "100%",
+          }}
+        >
+          Daniela Cioara — C.F. CRIDLR91D53Z129Y
+        </p>
       </div>
       <style>{`
         .footer-inner {

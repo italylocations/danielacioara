@@ -131,17 +131,22 @@ export default function Nav() {
             >
               {t("nav.about")}
             </Link>
-            {(["services", "journal"] as const).map((k) => (
-              <a
-                key={k}
-                href={`/#${k}`}
-                style={desktopLinkStyle}
-                onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "#ede8df")}
-                onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(237,232,223,0.65)")}
-              >
-                {t(`nav.${k}`)}
-              </a>
-            ))}
+            <a
+              href="/#services"
+              style={desktopLinkStyle}
+              onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "#ede8df")}
+              onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(237,232,223,0.65)")}
+            >
+              {t("nav.services")}
+            </a>
+            <Link
+              href="/journal"
+              style={desktopLinkStyle}
+              onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "#ede8df")}
+              onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(237,232,223,0.65)")}
+            >
+              {t("nav.journal")}
+            </Link>
             <a
               href="/#contact"
               className="gm"
@@ -252,17 +257,22 @@ export default function Nav() {
         >
           {t("nav.about")}
         </Link>
-        {(["services", "journal"] as const).map((k) => (
-          <a
-            key={k}
-            href={`/#${k}`}
-            onClick={closeMenu}
-            className="font-cormorant"
-            style={mobileLinkStyle}
-          >
-            {t(`nav.${k}`)}
-          </a>
-        ))}
+        <a
+          href="/#services"
+          onClick={closeMenu}
+          className="font-cormorant"
+          style={mobileLinkStyle}
+        >
+          {t("nav.services")}
+        </a>
+        <Link
+          href="/journal"
+          onClick={closeMenu}
+          className="font-cormorant"
+          style={mobileLinkStyle}
+        >
+          {t("nav.journal")}
+        </Link>
         <a
           href="/#contact"
           onClick={closeMenu}

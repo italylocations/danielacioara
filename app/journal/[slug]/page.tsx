@@ -6,6 +6,7 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import { getPostBySlug, getAllPosts, formatDate } from "@/lib/blog";
 import VideoBreak from "@/components/VideoBreak";
 import BackToJournal from "@/components/BackToJournal";
+import InnerPageNav from "@/components/InnerPageNav";
 import type { JSX } from "react";
 
 interface Props {
@@ -171,6 +172,7 @@ export default async function ArticlePage({ params }: Props) {
         paddingTop: 72,
       }}
     >
+      <InnerPageNav />
       <article
         style={{
           maxWidth: 720,

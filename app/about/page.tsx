@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import AboutNav from "./AboutNav";
+import InnerPageNav from "@/components/InnerPageNav";
 
 const R2 = process.env.NEXT_PUBLIC_R2_PUBLIC_URL ?? "";
 
@@ -71,7 +71,7 @@ export default function AboutPage() {
 
   return (
     <main>
-      <AboutNav />
+      <InnerPageNav />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

@@ -5,6 +5,20 @@ export const metadata: Metadata = {
   title: "Privacy Policy — Daniela Cioara",
 };
 
+const h2Style: React.CSSProperties = {
+  fontFamily: "var(--font-cormorant), serif",
+  fontSize: "1.3rem",
+  color: "#ede8df",
+  marginBottom: "0.75rem",
+  marginTop: "2rem",
+};
+
+const linkStyle: React.CSSProperties = {
+  color: "rgba(237,232,223,0.6)",
+  textDecoration: "underline",
+  textUnderlineOffset: "3px",
+};
+
 export default function PrivacyPolicy() {
   return (
     <main style={{ minHeight: "100vh", backgroundColor: "#0a0a0a", paddingTop: 72 }}>
@@ -35,42 +49,51 @@ export default function PrivacyPolicy() {
           Privacy Policy
         </h1>
         <div style={{ color: "rgba(237,232,223,0.6)", fontSize: "0.9rem", lineHeight: 1.8 }}>
-          <p style={{ marginBottom: "1.5rem" }}>
-            This website is operated by Daniela Cioara, makeup artist based in Rome, Italy.
-          </p>
-          <h2
-            style={{
-              fontFamily: "var(--font-cormorant), serif",
-              fontSize: "1.3rem",
-              color: "#ede8df",
-              marginBottom: "0.75rem",
-              marginTop: "2rem",
-            }}
-          >
-            Data collected
-          </h2>
+          <h2 style={h2Style}>Titolare del trattamento</h2>
           <p style={{ marginBottom: "1rem" }}>
-            When you submit the contact form, we collect your name, email address, and the content
-            of your message. This data is used solely to respond to your inquiry and is never shared
-            with third parties.
+            Daniela Cioara<br />
+            Codice Fiscale: CRIDLR91D53Z129Y<br />
+            Email: <a href="mailto:daniela@danielacioara.com" style={linkStyle}>daniela@danielacioara.com</a><br />
+            Sito web: danielacioara.com
           </p>
-          <h2
-            style={{
-              fontFamily: "var(--font-cormorant), serif",
-              fontSize: "1.3rem",
-              color: "#ede8df",
-              marginBottom: "0.75rem",
-              marginTop: "2rem",
-            }}
-          >
-            Your rights (GDPR)
-          </h2>
+
+          <h2 style={h2Style}>Dati raccolti</h2>
           <p style={{ marginBottom: "1rem" }}>
-            You have the right to access, correct, or delete your personal data at any time. To
-            exercise these rights, contact us at daniela@danielacioara.com.
+            Quando invii il modulo di contatto, raccogliamo il tuo nome, indirizzo email e il
+            contenuto del messaggio. Questi dati sono utilizzati esclusivamente per rispondere
+            alla tua richiesta e non vengono mai condivisi con terze parti.
           </p>
+
+          <h2 style={h2Style}>Cookie e tecnologie di tracciamento</h2>
+          <p style={{ marginBottom: "1rem" }}>
+            Questo sito utilizza Google Analytics per analizzare il traffico in forma aggregata
+            e anonima, e Cloudflare Turnstile per la protezione anti-spam del modulo di contatto.
+            Per maggiori dettagli, consulta la nostra{" "}
+            <Link href="/cookie-policy" style={linkStyle}>Cookie Policy</Link>.
+          </p>
+
+          <h2 style={h2Style}>Base giuridica del trattamento</h2>
+          <p style={{ marginBottom: "1rem" }}>
+            I dati personali sono trattati sulla base del legittimo interesse del titolare
+            (rispondere alle richieste ricevute) e, ove applicabile, del consenso dell&apos;interessato.
+          </p>
+
+          <h2 style={h2Style}>Conservazione dei dati</h2>
+          <p style={{ marginBottom: "1rem" }}>
+            I dati raccolti tramite il modulo di contatto vengono conservati per il tempo
+            necessario a gestire la richiesta e successivamente cancellati.
+          </p>
+
+          <h2 style={h2Style}>I tuoi diritti (GDPR)</h2>
+          <p style={{ marginBottom: "1rem" }}>
+            Ai sensi del Regolamento UE 2016/679 (GDPR), hai il diritto di accedere,
+            rettificare o cancellare i tuoi dati personali in qualsiasi momento.
+            Per esercitare questi diritti, contattaci all&apos;indirizzo{" "}
+            <a href="mailto:daniela@danielacioara.com" style={linkStyle}>daniela@danielacioara.com</a>.
+          </p>
+
           <p style={{ color: "rgba(237,232,223,0.3)", fontSize: "0.8rem", marginTop: "3rem" }}>
-            Last updated: April 2025
+            Ultimo aggiornamento: Aprile 2026
           </p>
         </div>
       </div>

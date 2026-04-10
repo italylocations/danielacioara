@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { getAllPosts } from "@/lib/blog";
+import InnerPageNav from "@/components/InnerPageNav";
 
 export const metadata: Metadata = {
   title: "Journal — Daniela Cioara",
@@ -16,6 +17,7 @@ export default function JournalPage() {
 
   return (
     <main style={{ minHeight: "100vh", backgroundColor: "#0a0a0a", paddingTop: 72 }}>
+      <InnerPageNav />
       <div style={{ maxWidth: 1280, margin: "0 auto", padding: "5rem 2rem" }}>
         {/* Header */}
         <div style={{ marginBottom: "4rem" }}>
