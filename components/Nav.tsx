@@ -116,7 +116,7 @@ export default function Nav() {
             style={{ alignItems: "center", gap: "2.5rem" }}
           >
             <a
-              href="#work"
+              href="/#work"
               style={desktopLinkStyle}
               onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "#ede8df")}
               onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(237,232,223,0.65)")}
@@ -134,7 +134,7 @@ export default function Nav() {
             {(["services", "journal"] as const).map((k) => (
               <a
                 key={k}
-                href={`#${k}`}
+                href={`/#${k}`}
                 style={desktopLinkStyle}
                 onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "#ede8df")}
                 onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(237,232,223,0.65)")}
@@ -143,7 +143,7 @@ export default function Nav() {
               </a>
             ))}
             <a
-              href="#contact"
+              href="/#contact"
               className="gm"
               style={{
                 textDecoration: "none",
@@ -237,7 +237,7 @@ export default function Nav() {
         }}
       >
         <a
-          href="#work"
+          href="/#work"
           onClick={closeMenu}
           className="font-cormorant"
           style={mobileLinkStyle}
@@ -255,7 +255,7 @@ export default function Nav() {
         {(["services", "journal"] as const).map((k) => (
           <a
             key={k}
-            href={`#${k}`}
+            href={`/#${k}`}
             onClick={closeMenu}
             className="font-cormorant"
             style={mobileLinkStyle}
@@ -264,7 +264,7 @@ export default function Nav() {
           </a>
         ))}
         <a
-          href="#contact"
+          href="/#contact"
           onClick={closeMenu}
           className="gm font-cormorant"
           style={{

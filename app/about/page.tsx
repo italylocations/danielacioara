@@ -455,6 +455,9 @@ export default function AboutPage() {
             max-width: 160px;
             margin: 0 auto 32px;
           }
+          .about-strip-inner {
+            animation-duration: 18s;
+          }
         }
       `}</style>
     </main>
