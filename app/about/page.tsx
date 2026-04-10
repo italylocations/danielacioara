@@ -14,8 +14,6 @@ const BTS_IMAGES = [
   "daniela-cioara-makeup-13.jpg",
   "daniela-cioara-makeup-14.jpg",
   "daniela-cioara-makeup-15.jpg",
-  "daniela-cioara-makeup-25.jpg",
-  "daniela-cioara-makeup-9.jpg",
 ];
 
 export default function AboutPage() {
@@ -298,10 +296,9 @@ export default function AboutPage() {
         <span className="gm-line" style={{ width: "100%", display: "block" }} />
       </div>
 
-      {/* ── 4. BTS GRID ──────────────────────────────────────────────────── */}
+      {/* ── 4. BTS STRIP ─────────────────────────────────────────────────── */}
       <section
-        className="about-page-bts"
-        style={{ backgroundColor: "#080808" }}
+        style={{ backgroundColor: "#080808", padding: "48px 0 80px" }}
       >
         <p
           className="gm"
@@ -310,28 +307,44 @@ export default function AboutPage() {
             letterSpacing: "0.18em",
             textTransform: "uppercase",
             marginBottom: 48,
+            padding: "0 44px",
           }}
         >
           Behind the work
         </p>
-        <div className="about-page-bts-grid">
-          {BTS_IMAGES.map((img) => (
-            <div key={img} className="about-page-bts-frame">
-              <Image
-                src={`${R2}/portfolio/${img}`}
-                alt="Daniela Cioara behind the scenes"
-                width={400}
-                height={300}
-                style={{
-                  width: "100%",
-                  height: "auto",
-                  aspectRatio: "4/3",
-                  objectFit: "cover",
-                  display: "block",
-                }}
-              />
-            </div>
-          ))}
+        <div
+          className="about-strip-container"
+          style={{
+            overflow: "hidden",
+            width: "100%",
+            borderTop: "0.5px solid #1A1A1A",
+            borderBottom: "0.5px solid #1A1A1A",
+            padding: "12px 0",
+          }}
+        >
+          <div className="about-strip-inner">
+            {[...BTS_IMAGES, ...BTS_IMAGES].map((img, i) => (
+              <div
+                key={`${img}-${i}`}
+                className="about-strip-frame"
+              >
+                <Image
+                  src={`${R2}/portfolio/${img}`}
+                  alt="Daniela Cioara behind the scenes"
+                  width={420}
+                  height={320}
+                  style={{
+                    height: 320,
+                    width: "auto",
+                    minWidth: 280,
+                    objectFit: "cover",
+                    display: "block",
+                    flexShrink: 0,
+                  }}
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -408,12 +421,20 @@ export default function AboutPage() {
           text-decoration: underline;
         }
 
-        .about-page-bts-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 12px;
+        @keyframes scrollStrip {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
         }
-        .about-page-bts-frame {
+        .about-strip-inner {
+          display: flex;
+          animation: scrollStrip 30s linear infinite;
+        }
+        .about-strip-container:hover .about-strip-inner {
+          animation-play-state: paused;
+        }
+        .about-strip-frame {
+          flex-shrink: 0;
+          margin-right: 12px;
           padding: 6px;
           border: 0.5px solid rgba(193,163,98,0.25);
           background:
@@ -426,15 +447,11 @@ export default function AboutPage() {
         @media (max-width: 767px) {
           .about-page-hero-title { font-size: 28px; }
           .about-page-bio { padding: 48px 24px; }
-          .about-page-bts { padding: 32px 24px 48px; }
           .about-page-cta { padding: 48px 24px; }
           .about-page-portrait {
             float: none;
             max-width: 160px;
             margin: 0 auto 32px;
-          }
-          .about-page-bts-grid {
-            grid-template-columns: repeat(2, 1fr);
           }
         }
       `}</style>
