@@ -40,29 +40,69 @@ export default function About() {
 
   return (
     <section id="about">
-      {/* ── PARTE 1: Video 16:9 + quote centrata ────────────────────────── */}
+      {/* ── PARTE 1a: Titolo su sfondo nero ──────────────────────────────── */}
       <div
         style={{
-          position: "relative",
+          backgroundColor: "#0A0A0A",
+          padding: "60px 44px",
+          textAlign: "center",
+        }}
+        className="about-intro"
+      >
+        <p
+          className="gm"
+          style={{
+            fontSize: 9,
+            letterSpacing: "0.3em",
+            textTransform: "uppercase",
+            fontFamily: "var(--font-dm-sans), sans-serif",
+            fontWeight: 300,
+            marginBottom: "1.25rem",
+          }}
+        >
+          About
+        </p>
+
+        <p
+          className="font-cormorant about-quote-text"
+          style={{
+            fontWeight: 300,
+            color: "#ede8df",
+            lineHeight: 1.12,
+          }}
+        >
+          {quoteParts[0]}
+          <em className="gm" style={{ fontStyle: "italic" }}>
+            {quoteKeyword}
+          </em>
+          {quoteParts[1] ?? ""}
+        </p>
+
+        <span
+          className="gm-line"
+          style={{ width: 40, display: "block", margin: "18px auto 0" }}
+        />
+      </div>
+
+      {/* ── PARTE 1b: Video clip14 — fullwidth, no overlay ───────────────── */}
+      <div
+        style={{
           width: "100%",
           aspectRatio: "16/9",
           backgroundColor: "#0a0a0a",
           overflow: "hidden",
         }}
       >
-        {/* Video — object-fit: contain per non croppare */}
         <video
           autoPlay
           muted
           loop
           playsInline
           style={{
-            position: "absolute",
-            inset: 0,
+            display: "block",
             width: "100%",
             height: "100%",
-            objectFit: "contain",
-            objectPosition: "center",
+            objectFit: "cover",
           }}
         >
           <source
@@ -75,63 +115,6 @@ export default function About() {
             type="video/mp4"
           />
         </video>
-
-        {/* Overlay scuro */}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            backgroundColor: "rgba(0,0,0,0.38)",
-          }}
-        />
-
-        {/* Testo sovrapposto */}
-        <div
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            textAlign: "center",
-            width: "90%",
-            maxWidth: 760,
-          }}
-        >
-          <p
-            className="gm"
-            style={{
-              fontSize: 9,
-              letterSpacing: "0.3em",
-              textTransform: "uppercase",
-              fontFamily: "var(--font-dm-sans), sans-serif",
-              fontWeight: 300,
-              marginBottom: "1.25rem",
-            }}
-          >
-            About
-          </p>
-
-          <p
-            className="font-cormorant about-quote-text"
-            style={{
-              fontWeight: 300,
-              color: "#ede8df",
-              lineHeight: 1.12,
-              textShadow: "0 2px 20px rgba(0,0,0,0.5)",
-            }}
-          >
-            {quoteParts[0]}
-            <em className="gm" style={{ fontStyle: "italic" }}>
-              {quoteKeyword}
-            </em>
-            {quoteParts[1] ?? ""}
-          </p>
-
-          <span
-            className="gm-line"
-            style={{ width: 40, display: "block", margin: "18px auto 0" }}
-          />
-        </div>
       </div>
 
       {/* ── PARTE 2: Grid bio + portrait ──────────────────────────────── */}
@@ -270,7 +253,7 @@ export default function About() {
 
       {/* ── Responsive ──────────────────────────────────────────────────── */}
       <style>{`
-        .about-quote-text { font-size: 46px; }
+        .about-quote-text { font-size: 38px; }
         .about-bio-outer  { padding: 50px 44px; }
         .about-bio-grid {
           display: grid;
