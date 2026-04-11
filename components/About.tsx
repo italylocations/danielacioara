@@ -105,8 +105,15 @@ export default function About() {
             objectFit: "cover",
           }}
         >
-          <source src="/hero-asia-mobile.mp4" media="(max-width: 767px)" type="video/mp4" />
-          <source src="/hero-asia.mp4" type="video/mp4" />
+          <source
+            src="https://pub-4bb9524bd21248d2ac34348d996317e9.r2.dev/videos/clip14-preview.mp4"
+            media="(max-width: 767px)"
+            type="video/mp4"
+          />
+          <source
+            src="https://pub-4bb9524bd21248d2ac34348d996317e9.r2.dev/videos/clip14.mp4"
+            type="video/mp4"
+          />
         </video>
       </div>
 
@@ -224,26 +231,6 @@ export default function About() {
         </div>
       </div>
 
-      {/* ── Video hero-asia.mp4 — chiude la sezione ────────────────────── */}
-      <div style={{ borderTop: "0.5px solid #1A1A1A" }}>
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="about-asia-video"
-          style={{
-            display: "block",
-            width: "100%",
-            height: "60vh",
-            objectFit: "cover",
-          }}
-        >
-          <source src="/hero-asia-mobile.mp4" media="(max-width: 767px)" type="video/mp4" />
-          <source src="/hero-asia.mp4" type="video/mp4" />
-        </video>
-      </div>
-
       {/* ── Responsive ──────────────────────────────────────────────────── */}
       <style>{`
         .about-quote-text { font-size: 38px; }
@@ -269,7 +256,6 @@ export default function About() {
         @media (max-width: 767px) {
           .about-quote-text { font-size: 28px; }
           .about-bio-outer  { padding: 32px 24px; }
-          .about-asia-video { height: 45vh !important; }
           .about-bio-grid {
             grid-template-columns: 1fr;
             gap: 32px;
