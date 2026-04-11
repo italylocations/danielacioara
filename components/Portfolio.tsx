@@ -6,49 +6,30 @@ import Lightbox from "@/components/Lightbox";
 
 const R2 = "https://pub-4bb9524bd21248d2ac34348d996317e9.r2.dev";
 
-type Item =
-  | { type: "photo"; file: string }
-  | { type: "video"; clip: string };
+/* ── Data ────────────────────────────────────────────────────────────────── */
+type Row =
+  | { kind: "photos"; files: [string, string] }
+  | { kind: "videos"; clips: [string, string, string] };
 
-const ITEMS: Item[] = [
-  { type: "photo", file: "daniela-cioara-makeup-16.jpg" },
-  { type: "video", clip: "clip6" },
-  { type: "photo", file: "daniela-cioara-makeup-7.jpg" },
-  { type: "video", clip: "clip10" },
-  { type: "photo", file: "daniela-cioara-makeup-1.jpg" },
-  { type: "video", clip: "clip1" },
-  { type: "photo", file: "daniela-cioara-makeup-6.jpg" },
-  { type: "video", clip: "clip5" },
-  { type: "photo", file: "daniela-cioara-makeup-2.jpg" },
-  { type: "video", clip: "clip7" },
-  { type: "photo", file: "daniela-cioara-makeup-24.jpg" },
-  { type: "video", clip: "clip12" },
-  { type: "photo", file: "daniela-cioara-makeup-25.jpg" },
-  { type: "video", clip: "clip15" },
-  { type: "photo", file: "daniela-cioara-makeup-17.jpg" },
-  { type: "video", clip: "clip9" },
-  { type: "photo", file: "daniela-cioara-makeup-23.jpg" },
-  { type: "video", clip: "clip4" },
-  { type: "photo", file: "daniela-cioara-makeup-20.jpg" },
-  { type: "video", clip: "clip2" },
-  { type: "video", clip: "clip8" },
-  { type: "video", clip: "clip16" },
+const ROWS: Row[] = [
+  { kind: "photos", files: ["daniela-cioara-makeup-16.jpg", "daniela-cioara-makeup-7.jpg"] },
+  { kind: "videos", clips: ["clip6", "clip10", "clip1"] },
+  { kind: "photos", files: ["daniela-cioara-makeup-1.jpg", "daniela-cioara-makeup-6.jpg"] },
+  { kind: "videos", clips: ["clip5", "clip7", "clip12"] },
+  { kind: "photos", files: ["daniela-cioara-makeup-2.jpg", "daniela-cioara-makeup-24.jpg"] },
+  { kind: "videos", clips: ["clip15", "clip9", "clip4"] },
+  { kind: "photos", files: ["daniela-cioara-makeup-25.jpg", "daniela-cioara-makeup-17.jpg"] },
+  { kind: "videos", clips: ["clip2", "clip8", "clip16"] },
+  { kind: "photos", files: ["daniela-cioara-makeup-23.jpg", "daniela-cioara-makeup-20.jpg"] },
 ];
 
-const PHOTOS = ITEMS.filter(
-  (it): it is Extract<Item, { type: "photo" }> => it.type === "photo"
-);
+// Flattened list of photos (for Lightbox index mapping)
+const PHOTOS: string[] = ROWS.flatMap((r) => (r.kind === "photos" ? r.files : []));
 
 /* ── Photo cell ──────────────────────────────────────────────────────────── */
-function PhotoCell({
-  file,
-  onClick,
-}: {
-  file: string;
-  onClick: () => void;
-}) {
+function PhotoCell({ file, onClick }: { file: string; onClick: () => void }) {
   return (
-    <div onClick={onClick} className="pf-cell">
+    <div onClick={onClick} className="pf-cell pf-photo">
       <span className="corner corner-tl" />
       <span className="corner corner-tr" />
       <span className="corner corner-bl" />
@@ -60,7 +41,7 @@ function PhotoCell({
           width: "100%",
           height: "100%",
           objectFit: "cover",
-          objectPosition: "center",
+          objectPosition: "center top",
           display: "block",
         }}
       />
@@ -69,14 +50,21 @@ function PhotoCell({
 }
 
 /* ── Video cell ──────────────────────────────────────────────────────────── */
-function VideoCell({ clip }: { clip: string }) {
-  const [playing, setPlaying] = useState(false);
-  const src = playing
+function VideoCell({
+  clip,
+  playingFull,
+  onToggle,
+}: {
+  clip: string;
+  playingFull: boolean;
+  onToggle: () => void;
+}) {
+  const src = playingFull
     ? `${R2}/videos/${clip}.mp4`
     : `${R2}/videos/${clip}-preview.mp4`;
 
   return (
-    <div onClick={() => setPlaying((p) => !p)} className="pf-cell">
+    <div onClick={onToggle} className="pf-cell pf-video">
       <span className="corner corner-tl" />
       <span className="corner corner-tr" />
       <span className="corner corner-bl" />
@@ -96,28 +84,9 @@ function VideoCell({ clip }: { clip: string }) {
       >
         <source src={src} type="video/mp4" />
       </video>
-      {!playing && (
-        <div
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%,-50%)",
-            width: 40,
-            height: 40,
-            borderRadius: "50%",
-            border: "1.5px solid rgba(201,163,82,0.6)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "#C9A874",
-            fontSize: 14,
-            backgroundColor: "rgba(0,0,0,0.25)",
-            zIndex: 2,
-            pointerEvents: "none",
-          }}
-        >
-          ▶
+      {!playingFull && (
+        <div className="pf-play">
+          <span className="pf-play-triangle" />
         </div>
       )}
     </div>
@@ -128,10 +97,11 @@ function VideoCell({ clip }: { clip: string }) {
 export default function Portfolio() {
   const { t } = useLanguage();
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [playingFull, setPlayingFull] = useState<Record<string, boolean>>({});
 
-  const images = PHOTOS.map((p) => ({
-    src: `${R2}/portfolio/${p.file}`,
-    alt: p.file,
+  const images = PHOTOS.map((file) => ({
+    src: `${R2}/portfolio/${file}`,
+    alt: file,
   }));
 
   const openLightbox = useCallback((i: number) => setLightboxIndex(i), []);
@@ -151,10 +121,15 @@ export default function Portfolio() {
     []
   );
 
+  const toggleVideo = useCallback((clip: string) => {
+    setPlayingFull((prev) => ({ ...prev, [clip]: !prev[clip] }));
+  }, []);
+
   return (
     <>
       <section id="portfolio" className="portfolio-section">
         <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+          {/* Header */}
           <div className="portfolio-header">
             <p
               className="gm"
@@ -182,23 +157,37 @@ export default function Portfolio() {
             </h2>
           </div>
 
-          <div className="pf-grid">
-            {ITEMS.map((item, i) => {
-              if (item.type === "photo") {
-                const photoIdx = PHOTOS.findIndex(
-                  (p) => p.file === item.file
-                );
-                return (
-                  <PhotoCell
-                    key={`p-${item.file}-${i}`}
-                    file={item.file}
-                    onClick={() => openLightbox(photoIdx)}
+          {/* Rows */}
+          {ROWS.map((row, rowIdx) => {
+            if (row.kind === "photos") {
+              return (
+                <div key={`row-${rowIdx}`} className="pf-row-photos">
+                  {row.files.map((file) => {
+                    const photoIdx = PHOTOS.indexOf(file);
+                    return (
+                      <PhotoCell
+                        key={file}
+                        file={file}
+                        onClick={() => openLightbox(photoIdx)}
+                      />
+                    );
+                  })}
+                </div>
+              );
+            }
+            return (
+              <div key={`row-${rowIdx}`} className="pf-row-videos">
+                {row.clips.map((clip) => (
+                  <VideoCell
+                    key={clip}
+                    clip={clip}
+                    playingFull={!!playingFull[clip]}
+                    onToggle={() => toggleVideo(clip)}
                   />
-                );
-              }
-              return <VideoCell key={`v-${item.clip}-${i}`} clip={item.clip} />;
-            })}
-          </div>
+                ))}
+              </div>
+            );
+          })}
         </div>
       </section>
 
@@ -216,43 +205,96 @@ export default function Portfolio() {
         .portfolio-section { padding: 6rem 2rem; }
         .portfolio-header  { margin-bottom: 3rem; }
 
-        .pf-grid {
+        .pf-row-photos {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
+          grid-template-columns: 1fr 1fr;
           gap: 10px;
+          margin-bottom: 10px;
+        }
+        .pf-row-videos {
+          display: grid;
+          grid-template-columns: 1fr 1fr 1fr;
+          gap: 10px;
+          margin-bottom: 10px;
         }
 
         .pf-cell {
           position: relative;
           overflow: hidden;
-          aspect-ratio: 3 / 4;
           cursor: pointer;
+          background: #0D0D0D;
           border: 2.5px solid transparent;
           border-image: linear-gradient(
             105deg,
-            #3A2A0A,
-            #8A6520,
-            rgba(201,163,82,0.3),
-            #8A6520,
-            #3A2A0A
+            #6B4F1A,
+            #C9A352,
+            #F5D98B,
+            #C9A352,
+            #FFF0A0,
+            #C9A352,
+            #7A5520
           ) 1;
           transition: border-image 0.3s ease;
         }
-        .pf-cell:hover {
+        .pf-photo { aspect-ratio: 4 / 5; }
+        .pf-video { aspect-ratio: 16 / 9; }
+
+        .pf-video:hover {
           border-image: linear-gradient(
             105deg,
-            #8A6520,
+            #8A6B28,
             #E5C373,
             #FFF0A0,
+            #FFE898,
+            #FFF0A0,
             #E5C373,
-            #8A6520
+            #8A6B28
           ) 1;
+        }
+
+        .pf-play {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          border: 1.5px solid rgba(201,163,82,0.55);
+          background: rgba(0,0,0,0.3);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          pointer-events: none;
+          opacity: 1;
+          transition: opacity 0.2s ease;
+          z-index: 2;
+        }
+        .pf-video:hover .pf-play { opacity: 0; }
+
+        .pf-play-triangle {
+          display: block;
+          width: 0;
+          height: 0;
+          margin-left: 3px;
+          border-left: 14px solid #C9A874;
+          border-top: 9px solid transparent;
+          border-bottom: 9px solid transparent;
         }
 
         @media (max-width: 767px) {
           .portfolio-section { padding: 32px 20px; }
           .portfolio-header  { margin-bottom: 1.5rem; }
-          .pf-grid { grid-template-columns: repeat(2, 1fr); }
+
+          .pf-row-photos {
+            grid-template-columns: 1fr 1fr;
+          }
+          .pf-row-videos {
+            grid-template-columns: repeat(3, minmax(160px, 1fr));
+            overflow-x: auto;
+            scrollbar-width: none;
+          }
+          .pf-row-videos::-webkit-scrollbar { display: none; }
         }
       `}</style>
     </>
