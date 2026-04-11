@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -73,41 +74,16 @@ export default function Nav() {
           }}
         >
           {/* Logo */}
-          <Link href="/" className="flex flex-col items-center gap-0" style={{ textDecoration: "none" }} onClick={closeMenu}>
-            <span style={{
-              fontFamily: "'Cormorant Garamond', serif",
-              fontSize: '18px',
-              fontWeight: 300,
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase',
-              background: 'linear-gradient(105deg,#6B4F1A 0%,#C9A352 18%,#F5D98B 32%,#E8C060 42%,#C9A352 50%,#F0D070 60%,#FFF0A0 68%,#C9A352 78%,#8A6520 88%,#C9A352 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              lineHeight: 1,
-              display: 'block',
-            }}>
-              Daniela Cioara
-            </span>
-            <span style={{
-              display: 'block',
-              width: '100%',
-              height: '0.5px',
-              background: 'linear-gradient(90deg, transparent, #C9A352, #F5D98B, #C9A352, transparent)',
-              margin: '5px 0',
-            }} />
-            <span className="nav-logo-sub" style={{
-              fontFamily: "'Cormorant Garamond', serif",
-              fontSize: '7px',
-              fontWeight: 300,
-              letterSpacing: '0.32em',
-              textTransform: 'uppercase',
-              color: 'rgba(201,163,82,0.7)',
-              lineHeight: 1,
-              display: 'block',
-            }}>
-              Makeup Artist · Rome
-            </span>
+          <Link href="/" style={{ textDecoration: "none", display: "flex", alignItems: "center" }} onClick={closeMenu}>
+            <Image
+              src="/daniela-logo-final.png"
+              alt="Daniela Cioara Makeup Artist Rome"
+              width={160}
+              height={72}
+              preload
+              style={{ objectFit: "contain" }}
+              className="nav-logo-img"
+            />
           </Link>
 
           {/* ── Desktop links ─────────────────────────────────────────── */}
@@ -323,8 +299,9 @@ export default function Nav() {
       </div>
 
       <style>{`
+        .nav-logo-img { width: 160px !important; height: 72px !important; }
         @media (max-width: 767px) {
-          .nav-logo-sub { display: none !important; }
+          .nav-logo-img { width: 130px !important; height: 58px !important; }
         }
       `}</style>
     </>

@@ -149,6 +149,13 @@ export default function AboutPage() {
             </em>
             . Never masking.
           </h1>
+          <Image
+            src="/daniela-logo-final.png"
+            alt="Daniela Cioara"
+            width={120}
+            height={54}
+            style={{ objectFit: "contain", opacity: 0.85, marginTop: "16px" }}
+          />
         </div>
       </section>
 

@@ -10,7 +10,11 @@
       "Bash(npx next:*)",
       "Bash(npx tsc:*)",
       "Bash(node:*)",
-      "Bash(ffmpeg:*)"
+      "Bash(ffmpeg:*)",
+      "Bash(npm list:*)",
+      "Bash(npm install:*)",
+      "Bash(svgo public/daniela-cioara-makeup-logo.svg -o public/logo-optimized.svg --multipass)",
+      "Bash(ls:*)"
     ]
   }
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Footer() {
@@ -21,13 +22,14 @@ export default function Footer() {
           margin: "0 auto",
         }}
       >
-        <Link href="/" style={{ textDecoration: "none" }}>
-          <span
-            className="gm font-cormorant"
-            style={{ fontSize: "1rem", fontWeight: 400, letterSpacing: "0.04em" }}
-          >
-            Daniela Cioara
-          </span>
+        <Link href="/" style={{ textDecoration: "none", display: "flex", alignItems: "center" }}>
+          <Image
+            src="/daniela-logo-final.png"
+            alt="Daniela Cioara Makeup Artist Rome"
+            width={140}
+            height={64}
+            style={{ objectFit: "contain", opacity: 0.7 }}
+          />
         </Link>
 
         {/* Contact row */}

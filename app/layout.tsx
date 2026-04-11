@@ -3,6 +3,7 @@ import Script from "next/script";
 import { Cormorant_Garamond, DM_Sans } from "next/font/google";
 import "./globals.css";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import SplashScreen from "@/components/SplashScreen";
 
 const cormorant = Cormorant_Garamond({
   weight: ["300", "400"],
@@ -118,6 +119,7 @@ export default function RootLayout({
         </Script>
       </head>
       <body className="min-h-full flex flex-col">
+        <SplashScreen />
         {children}
         <WhatsAppButton />
       </body>
