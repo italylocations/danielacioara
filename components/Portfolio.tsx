@@ -6,45 +6,63 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import Lightbox from "@/components/Lightbox";
 
 const R2_BASE = process.env.NEXT_PUBLIC_R2_PUBLIC_URL ?? "";
+const R2_VIDEO = "https://pub-4bb9524bd21248d2ac34348d996317e9.r2.dev";
 
-interface Photo {
-  file: string;
-  catKey: string;
-}
+type Item =
+  | { type: "photo"; file: string; catKey: string; tall?: boolean }
+  | { type: "video"; clip: string };
 
-const PHOTOS: Photo[] = [
-  { file: "daniela-cioara-makeup-16.jpg", catKey: "portfolio.cat1" },
-  { file: "daniela-cioara-makeup-7.jpg",  catKey: "portfolio.cat2" },
-  { file: "daniela-cioara-makeup-1.jpg",  catKey: "portfolio.cat1" },
-  { file: "daniela-cioara-makeup-6.jpg",  catKey: "portfolio.cat3" },
-  { file: "daniela-cioara-makeup-2.jpg",  catKey: "portfolio.cat4" },
-  { file: "daniela-cioara-makeup-24.jpg", catKey: "portfolio.cat2" },
-  { file: "daniela-cioara-makeup-25.jpg", catKey: "portfolio.cat1" },
-  { file: "daniela-cioara-makeup-17.jpg", catKey: "portfolio.cat3" },
-  { file: "daniela-cioara-makeup-23.jpg", catKey: "portfolio.cat1" },
-  { file: "daniela-cioara-makeup-20.jpg", catKey: "portfolio.cat4" },
+const ITEMS: Item[] = [
+  { type: "photo", file: "daniela-cioara-makeup-16.jpg", catKey: "portfolio.cat1", tall: true },
+  { type: "video", clip: "clip6" },
+  { type: "photo", file: "daniela-cioara-makeup-7.jpg", catKey: "portfolio.cat2" },
+  { type: "video", clip: "clip10" },
+  { type: "photo", file: "daniela-cioara-makeup-1.jpg", catKey: "portfolio.cat1" },
+  { type: "video", clip: "clip1" },
+  { type: "photo", file: "daniela-cioara-makeup-6.jpg", catKey: "portfolio.cat3" },
+  { type: "video", clip: "clip5" },
+  { type: "photo", file: "daniela-cioara-makeup-2.jpg", catKey: "portfolio.cat4" },
+  { type: "video", clip: "clip7" },
+  { type: "photo", file: "daniela-cioara-makeup-24.jpg", catKey: "portfolio.cat2" },
+  { type: "video", clip: "clip12" },
+  { type: "photo", file: "daniela-cioara-makeup-25.jpg", catKey: "portfolio.cat1" },
+  { type: "video", clip: "clip15" },
+  { type: "photo", file: "daniela-cioara-makeup-17.jpg", catKey: "portfolio.cat3" },
+  { type: "video", clip: "clip9" },
+  { type: "photo", file: "daniela-cioara-makeup-23.jpg", catKey: "portfolio.cat1" },
+  { type: "video", clip: "clip4" },
+  { type: "photo", file: "daniela-cioara-makeup-20.jpg", catKey: "portfolio.cat4" },
+  { type: "video", clip: "clip2" },
+  { type: "video", clip: "clip8" },
+  { type: "video", clip: "clip16" },
 ];
 
-function PortfolioItem({
+// Photos only — used by Lightbox
+const PHOTOS = ITEMS.filter((it): it is Extract<Item, { type: "photo" }> => it.type === "photo");
+// Videos only — used by mobile horizontal scroll
+const VIDEOS = ITEMS.filter((it): it is Extract<Item, { type: "video" }> => it.type === "video");
+
+const GOLD_BORDER =
+  "linear-gradient(105deg,#6b4f1a,#c9a352,#f5d98b,#c9a352,#fff0a0,#c9a352,#7a5520) 1";
+
+/* ── Photo card ──────────────────────────────────────────────────────────── */
+function PhotoCard({
   photo,
-  index,
   onClick,
   mobile,
+  tall,
 }: {
-  photo: Photo;
-  index: number;
-  onClick: (i: number) => void;
+  photo: Extract<Item, { type: "photo" }>;
+  onClick: () => void;
   mobile?: boolean;
+  tall?: boolean;
 }) {
   const [hovered, setHovered] = useState(false);
-
-  const src = R2_BASE
-    ? `${R2_BASE}/portfolio/${photo.file}`
-    : null;
+  const src = R2_BASE ? `${R2_BASE}/portfolio/${photo.file}` : null;
 
   return (
     <div
-      onClick={() => onClick(index)}
+      onClick={onClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
@@ -52,13 +70,14 @@ function PortfolioItem({
         cursor: "pointer",
         overflow: "hidden",
         border: "2.5px solid transparent",
-        borderImage:
-          "linear-gradient(105deg,#6b4f1a,#c9a352,#f5d98b,#c9a352,#fff0a0,#c9a352,#7a5520) 1",
+        borderImage: GOLD_BORDER,
+        ...(tall && !mobile ? { gridRow: "span 2" } : {}),
         ...(mobile
           ? { width: "85vw", flexShrink: 0, aspectRatio: "4/5", scrollSnapAlign: "center" }
-          : {}),
+          : tall
+            ? { height: "100%", minHeight: "100%" }
+            : { aspectRatio: "4/5" }),
       }}
-      className={mobile ? "" : "aspect-square md:aspect-[4/5]"}
     >
       {/* Corner accents */}
       <span className="corner corner-tl" style={{ zIndex: 3 }} />
@@ -66,7 +85,6 @@ function PortfolioItem({
       <span className="corner corner-bl" style={{ zIndex: 3 }} />
       <span className="corner corner-br" style={{ zIndex: 3 }} />
 
-      {/* Photo */}
       {src ? (
         <Image
           src={src}
@@ -112,12 +130,119 @@ function PortfolioItem({
   );
 }
 
+/* ── Video card ──────────────────────────────────────────────────────────── */
+function VideoCard({
+  clip,
+  expanded,
+  onClick,
+  mobile,
+}: {
+  clip: string;
+  expanded: boolean;
+  onClick: () => void;
+  mobile?: boolean;
+}) {
+  const [hovered, setHovered] = useState(false);
+
+  const src = expanded
+    ? `${R2_VIDEO}/videos/${clip}.mp4`
+    : `${R2_VIDEO}/videos/${clip}-preview.mp4`;
+
+  return (
+    <div
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        position: "relative",
+        cursor: "pointer",
+        overflow: "hidden",
+        aspectRatio: "16/9",
+        border: "2.5px solid transparent",
+        borderImage: GOLD_BORDER,
+        ...(mobile
+          ? { width: "85vw", flexShrink: 0, scrollSnapAlign: "center" }
+          : {}),
+      }}
+    >
+      {/* Corner accents */}
+      <span className="corner corner-tl" style={{ zIndex: 3 }} />
+      <span className="corner corner-tr" style={{ zIndex: 3 }} />
+      <span className="corner corner-bl" style={{ zIndex: 3 }} />
+      <span className="corner corner-br" style={{ zIndex: 3 }} />
+
+      {/* Video */}
+      <video
+        key={src}
+        autoPlay
+        muted
+        loop
+        playsInline
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+        }}
+      >
+        <source src={src} type="video/mp4" />
+      </video>
+
+      {/* Overlay + play icon */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          backgroundColor: "rgba(0,0,0,0.15)",
+          opacity: hovered || expanded ? 0 : 1,
+          transition: "opacity 0.3s ease",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 2,
+          pointerEvents: "none",
+        }}
+      >
+        <div
+          style={{
+            width: 36,
+            height: 36,
+            borderRadius: "50%",
+            border: "1.5px solid rgba(201,163,82,0.6)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "rgba(0,0,0,0.25)",
+          }}
+        >
+          <span
+            style={{
+              display: "block",
+              width: 0,
+              height: 0,
+              marginLeft: 3,
+              borderTop: "6px solid transparent",
+              borderBottom: "6px solid transparent",
+              borderLeft: "10px solid #c9a352",
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Portfolio section ──────────────────────────────────────────────────── */
 export default function Portfolio() {
   const { t } = useLanguage();
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [expandedVideo, setExpandedVideo] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
-  const [atEnd, setAtEnd] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const [atEndPhotos, setAtEndPhotos] = useState(false);
+  const [atEndVideos, setAtEndVideos] = useState(false);
+  const photosScrollRef = useRef<HTMLDivElement>(null);
+  const videosScrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -126,16 +251,22 @@ export default function Portfolio() {
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  const handleScroll = useCallback(() => {
-    const el = scrollRef.current;
+  const handleScrollPhotos = useCallback(() => {
+    const el = photosScrollRef.current;
     if (!el) return;
-    setAtEnd(el.scrollLeft + el.clientWidth >= el.scrollWidth - 10);
+    setAtEndPhotos(el.scrollLeft + el.clientWidth >= el.scrollWidth - 10);
   }, []);
 
-  const scrollNext = useCallback(() => {
-    const el = scrollRef.current;
+  const handleScrollVideos = useCallback(() => {
+    const el = videosScrollRef.current;
     if (!el) return;
-    const itemWidth = el.clientWidth * 0.85 + 12; // 85vw + gap
+    setAtEndVideos(el.scrollLeft + el.clientWidth >= el.scrollWidth - 10);
+  }, []);
+
+  const scrollNext = useCallback((ref: React.RefObject<HTMLDivElement | null>) => {
+    const el = ref.current;
+    if (!el) return;
+    const itemWidth = el.clientWidth * 0.85 + 12;
     el.scrollBy({ left: itemWidth, behavior: "smooth" });
   }, []);
 
@@ -144,24 +275,24 @@ export default function Portfolio() {
     alt: p.file,
   }));
 
-  const openLightbox = useCallback((i: number) => setLightboxIndex(i), []);
+  const openLightbox = useCallback((photoIdx: number) => setLightboxIndex(photoIdx), []);
   const closeLightbox = useCallback(() => setLightboxIndex(null), []);
+  const goPrev = useCallback(
+    () => setLightboxIndex((i) => (i === null ? null : (i - 1 + PHOTOS.length) % PHOTOS.length)),
+    []
+  );
+  const goNext = useCallback(
+    () => setLightboxIndex((i) => (i === null ? null : (i + 1) % PHOTOS.length)),
+    []
+  );
 
-  const goPrev = useCallback(() =>
-    setLightboxIndex((i) => (i === null ? null : (i - 1 + PHOTOS.length) % PHOTOS.length)),
-    []
-  );
-  const goNext = useCallback(() =>
-    setLightboxIndex((i) => (i === null ? null : (i + 1) % PHOTOS.length)),
-    []
-  );
+  const toggleVideo = useCallback((clip: string) => {
+    setExpandedVideo((prev) => (prev === clip ? null : clip));
+  }, []);
 
   return (
     <>
-      <section
-        id="portfolio"
-        className="portfolio-section"
-      >
+      <section id="portfolio" className="portfolio-section">
         <div style={{ maxWidth: 1280, margin: "0 auto" }}>
           {/* Header */}
           <div className="portfolio-header">
@@ -191,14 +322,15 @@ export default function Portfolio() {
             </h2>
           </div>
 
-          {/* Mobile: horizontal scroll */}
           {isMobile ? (
-            <div style={{ position: "relative" }}>
+            /* ── Mobile: photos vertical stack + videos horizontal scroll ── */
+            <>
               <div
-                ref={scrollRef}
-                onScroll={handleScroll}
+                ref={photosScrollRef}
+                onScroll={handleScrollPhotos}
                 className="portfolio-scroll"
                 style={{
+                  position: "relative",
                   display: "flex",
                   overflowX: "scroll",
                   scrollSnapType: "x mandatory",
@@ -208,53 +340,87 @@ export default function Portfolio() {
                 }}
               >
                 {PHOTOS.map((photo, i) => (
-                  <PortfolioItem
+                  <PhotoCard
                     key={photo.file}
                     photo={photo}
-                    index={i}
-                    onClick={openLightbox}
+                    onClick={() => openLightbox(i)}
                     mobile
                   />
                 ))}
               </div>
-              {/* Invisible next arrow */}
-              {!atEnd && (
+              {!atEndPhotos && (
                 <button
-                  onClick={scrollNext}
+                  onClick={() => scrollNext(photosScrollRef)}
                   aria-label="Next photo"
-                  style={{
-                    position: "absolute",
-                    right: 0,
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    width: 44,
-                    height: 44,
-                    opacity: 0,
-                    cursor: "pointer",
-                    background: "none",
-                    border: "none",
-                    zIndex: 4,
-                  }}
+                  className="portfolio-arrow-btn"
                 />
               )}
-            </div>
+
+              <div style={{ marginTop: 24 }}>
+                <div
+                  ref={videosScrollRef}
+                  onScroll={handleScrollVideos}
+                  className="portfolio-scroll"
+                  style={{
+                    position: "relative",
+                    display: "flex",
+                    overflowX: "scroll",
+                    scrollSnapType: "x mandatory",
+                    gap: 12,
+                    padding: "0 20px",
+                    scrollbarWidth: "none",
+                  }}
+                >
+                  {VIDEOS.map((v) => (
+                    <VideoCard
+                      key={v.clip}
+                      clip={v.clip}
+                      expanded={expandedVideo === v.clip}
+                      onClick={() => toggleVideo(v.clip)}
+                      mobile
+                    />
+                  ))}
+                </div>
+                {!atEndVideos && (
+                  <button
+                    onClick={() => scrollNext(videosScrollRef)}
+                    aria-label="Next video"
+                    className="portfolio-arrow-btn"
+                  />
+                )}
+              </div>
+            </>
           ) : (
-            /* Desktop: grid 2 columns */
+            /* ── Desktop: 2-col mixed grid ────────────────────────────── */
             <div
               style={{
                 display: "grid",
                 gridTemplateColumns: "repeat(2, 1fr)",
                 gap: "1rem",
+                alignItems: "stretch",
               }}
             >
-              {PHOTOS.map((photo, i) => (
-                <PortfolioItem
-                  key={photo.file}
-                  photo={photo}
-                  index={i}
-                  onClick={openLightbox}
-                />
-              ))}
+              {ITEMS.map((item, i) => {
+                if (item.type === "photo") {
+                  const photoIdx = PHOTOS.indexOf(item);
+                  return (
+                    <PhotoCard
+                      key={`photo-${item.file}-${i}`}
+                      photo={item}
+                      onClick={() => openLightbox(photoIdx)}
+                      tall={item.tall}
+                    />
+                  );
+                }
+                return (
+                  <VideoCard
+                    key={`video-${item.clip}-${i}`}
+                    clip={item.clip}
+                    expanded={expandedVideo === item.clip}
+                    onClick={() => toggleVideo(item.clip)}
+                  />
+                );
+              })}
             </div>
           )}
         </div>
@@ -274,6 +440,19 @@ export default function Portfolio() {
       <style>{`
         .portfolio-section { padding: 6rem 2rem; }
         .portfolio-header  { margin-bottom: 3rem; }
+        .portfolio-arrow-btn {
+          position: absolute;
+          right: 0;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 44px;
+          height: 44px;
+          opacity: 0;
+          cursor: pointer;
+          background: none;
+          border: none;
+          z-index: 4;
+        }
 
         @media (max-width: 767px) {
           .portfolio-section { padding: 32px 0; }
