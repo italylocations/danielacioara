@@ -48,10 +48,24 @@ export const metadata: Metadata = {
     title: "Daniela Cioara | Makeup Artist Rome",
     description:
       "Professional makeup artist based in Rome. Commercial, editorial, private sessions and destination weddings in Italy. Specialist in diverse skin tones and Asian beauty.",
+    url: "https://danielacioara.com",
+    siteName: "Daniela Cioara",
+    images: [
+      {
+        url: "https://danielacioara.com/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Daniela Cioara — Makeup Artist Rome",
+      },
+    ],
     type: "website",
     locale: "en_US",
-    url: SITE_URL,
-    siteName: "Daniela Cioara",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Daniela Cioara | Makeup Artist Rome",
+    description: "Professional makeup artist in Rome",
+    images: ["https://danielacioara.com/og-image.jpg"],
   },
   robots: {
     index: true,
