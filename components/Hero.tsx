@@ -34,8 +34,8 @@ export default function Hero() {
           objectPosition: "center",
         }}
       >
-        <source src="/hero-mobile.mp4" media="(max-width: 767px)" type="video/mp4" />
-        <source src="/hero.mp4" type="video/mp4" />
+        <source src="/hero-v2-mobile.mp4" media="(max-width: 767px)" type="video/mp4" />
+        <source src="/hero-v2.mp4" type="video/mp4" />
       </video>
 
       {/* ── Overlay scuro ────────────────────────────────────────────────── */}
