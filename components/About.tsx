@@ -65,8 +65,15 @@ export default function About() {
             objectPosition: "center",
           }}
         >
-          <source src="/hero2-mobile.mp4" media="(max-width: 767px)" type="video/mp4" />
-          <source src="/hero2.mp4" type="video/mp4" />
+          <source
+            src="https://pub-4bb9524bd21248d2ac34348d996317e9.r2.dev/videos/clip14-preview.mp4"
+            media="(max-width: 767px)"
+            type="video/mp4"
+          />
+          <source
+            src="https://pub-4bb9524bd21248d2ac34348d996317e9.r2.dev/videos/clip14.mp4"
+            type="video/mp4"
+          />
         </video>
 
         {/* Overlay scuro */}

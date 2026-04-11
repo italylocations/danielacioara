@@ -3,6 +3,7 @@ import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
 import Ticker from "@/components/Ticker";
 import Portfolio from "@/components/Portfolio";
+import VideoPortfolio from "@/components/VideoPortfolio";
 import About from "@/components/About";
 import Services from "@/components/Services";
 import Journal from "@/components/Journal";
@@ -20,6 +21,7 @@ export default function HomePage() {
         <Hero />
         <Ticker />
         <Portfolio />
+        <VideoPortfolio />
         <About />
         <Services />
         <Journal posts={posts} />
