@@ -77,14 +77,55 @@ export default function AboutPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* ── 1. HERO — video ─────────────────────────────────────────────── */}
+      {/* ── 1a. Titolo su sfondo nero ─────────────────────────────────────── */}
       <section
         style={{
-          position: "relative",
+          backgroundColor: "#0A0A0A",
+          padding: "60px 44px",
+          textAlign: "center",
+          marginTop: 72,
+        }}
+      >
+        <p
+          className="gm"
+          style={{
+            fontSize: 9,
+            letterSpacing: "0.3em",
+            textTransform: "uppercase",
+            fontFamily: "var(--font-dm-sans), sans-serif",
+            fontWeight: 300,
+            marginBottom: "1.25rem",
+          }}
+        >
+          About
+        </p>
+        <h1
+          className="font-cormorant about-page-hero-title"
+          style={{
+            fontWeight: 300,
+            color: "#EDE8DF",
+            lineHeight: 1.15,
+          }}
+        >
+          The art of{" "}
+          <em className="gm" style={{ fontStyle: "italic" }}>
+            enhancing
+          </em>
+          . Never masking.
+        </h1>
+        <span
+          className="gm-line"
+          style={{ width: 40, display: "block", margin: "18px auto 0" }}
+        />
+      </section>
+
+      {/* ── 1b. Video clip14 — fullwidth, no overlay ──────────────────────── */}
+      <section
+        style={{
           width: "100%",
           height: "80vh",
           overflow: "hidden",
-          marginTop: 72,
+          backgroundColor: "#0A0A0A",
         }}
       >
         <video
@@ -93,8 +134,7 @@ export default function AboutPage() {
           loop
           playsInline
           style={{
-            position: "absolute",
-            inset: 0,
+            display: "block",
             width: "100%",
             height: "100%",
             objectFit: "cover",
@@ -110,50 +150,6 @@ export default function AboutPage() {
             type="video/mp4"
           />
         </video>
-        <div
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%,-50%)",
-            textAlign: "center",
-            width: "90%",
-            maxWidth: 700,
-            padding: "40px 20px",
-            background:
-              "radial-gradient(ellipse at center, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.15) 55%, rgba(0,0,0,0) 80%)",
-          }}
-        >
-          <p
-            className="gm"
-            style={{
-              fontSize: 9,
-              letterSpacing: "0.3em",
-              textTransform: "uppercase",
-              fontFamily: "var(--font-dm-sans), sans-serif",
-              fontWeight: 300,
-              marginBottom: "1.25rem",
-              textShadow: "0 2px 20px rgba(0,0,0,0.8)",
-            }}
-          >
-            About
-          </p>
-          <h1
-            className="font-cormorant about-page-hero-title"
-            style={{
-              fontWeight: 300,
-              color: "#ede8df",
-              lineHeight: 1.15,
-              textShadow: "0 2px 20px rgba(0,0,0,0.8)",
-            }}
-          >
-            The art of{" "}
-            <em className="gm" style={{ fontStyle: "italic" }}>
-              enhancing
-            </em>
-            . Never masking.
-          </h1>
-        </div>
       </section>
 
       {/* ── 2. BIO ───────────────────────────────────────────────────────── */}
