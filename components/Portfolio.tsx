@@ -71,12 +71,10 @@ function PhotoCard({
         overflow: "hidden",
         border: "2.5px solid transparent",
         borderImage: GOLD_BORDER,
-        ...(tall && !mobile ? { gridRow: "span 2" } : {}),
+        ...(tall && !mobile ? { gridRow: "span 2", aspectRatio: "8/5" } : { aspectRatio: "4/5" }),
         ...(mobile
           ? { width: "85vw", flexShrink: 0, aspectRatio: "4/5", scrollSnapAlign: "center" }
-          : tall
-            ? { height: "100%", minHeight: "100%" }
-            : { aspectRatio: "4/5" }),
+          : {}),
       }}
     >
       {/* Corner accents */}
@@ -133,18 +131,18 @@ function PhotoCard({
 /* ── Video card ──────────────────────────────────────────────────────────── */
 function VideoCard({
   clip,
-  expanded,
+  playing,
   onClick,
   mobile,
 }: {
   clip: string;
-  expanded: boolean;
+  playing: boolean;
   onClick: () => void;
   mobile?: boolean;
 }) {
   const [hovered, setHovered] = useState(false);
 
-  const src = expanded
+  const src = playing
     ? `${R2_VIDEO}/videos/${clip}.mp4`
     : `${R2_VIDEO}/videos/${clip}-preview.mp4`;
 
@@ -157,7 +155,7 @@ function VideoCard({
         position: "relative",
         cursor: "pointer",
         overflow: "hidden",
-        aspectRatio: "16/9",
+        aspectRatio: "4/5",
         border: "2.5px solid transparent",
         borderImage: GOLD_BORDER,
         ...(mobile
@@ -171,7 +169,7 @@ function VideoCard({
       <span className="corner corner-bl" style={{ zIndex: 3 }} />
       <span className="corner corner-br" style={{ zIndex: 3 }} />
 
-      {/* Video */}
+      {/* Video — preview o full in loop a schermo pieno */}
       <video
         key={src}
         autoPlay
@@ -189,27 +187,26 @@ function VideoCard({
         <source src={src} type="video/mp4" />
       </video>
 
-      {/* Overlay + play icon */}
+      {/* Play icon */}
       <div
         style={{
           position: "absolute",
           inset: 0,
-          backgroundColor: "rgba(0,0,0,0.15)",
-          opacity: hovered || expanded ? 0 : 1,
-          transition: "opacity 0.3s ease",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          opacity: hovered ? 0 : 1,
+          transition: "opacity 0.3s ease",
           zIndex: 2,
           pointerEvents: "none",
         }}
       >
         <div
           style={{
-            width: 36,
-            height: 36,
+            width: 40,
+            height: 40,
             borderRadius: "50%",
-            border: "1.5px solid rgba(201,163,82,0.6)",
+            border: "1.5px solid rgba(201,163,82,0.5)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -222,9 +219,9 @@ function VideoCard({
               width: 0,
               height: 0,
               marginLeft: 3,
-              borderTop: "6px solid transparent",
-              borderBottom: "6px solid transparent",
-              borderLeft: "10px solid #c9a352",
+              borderTop: "7px solid transparent",
+              borderBottom: "7px solid transparent",
+              borderLeft: "11px solid #c9a352",
             }}
           />
         </div>
@@ -237,7 +234,7 @@ function VideoCard({
 export default function Portfolio() {
   const { t } = useLanguage();
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  const [expandedVideo, setExpandedVideo] = useState<string | null>(null);
+  const [playingVideo, setPlayingVideo] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [atEndPhotos, setAtEndPhotos] = useState(false);
   const [atEndVideos, setAtEndVideos] = useState(false);
@@ -287,7 +284,7 @@ export default function Portfolio() {
   );
 
   const toggleVideo = useCallback((clip: string) => {
-    setExpandedVideo((prev) => (prev === clip ? null : clip));
+    setPlayingVideo((prev) => (prev === clip ? null : clip));
   }, []);
 
   return (
@@ -375,7 +372,7 @@ export default function Portfolio() {
                     <VideoCard
                       key={v.clip}
                       clip={v.clip}
-                      expanded={expandedVideo === v.clip}
+                      playing={playingVideo === v.clip}
                       onClick={() => toggleVideo(v.clip)}
                       mobile
                     />
@@ -416,7 +413,7 @@ export default function Portfolio() {
                   <VideoCard
                     key={`video-${item.clip}-${i}`}
                     clip={item.clip}
-                    expanded={expandedVideo === item.clip}
+                    playing={playingVideo === item.clip}
                     onClick={() => toggleVideo(item.clip)}
                   />
                 );
