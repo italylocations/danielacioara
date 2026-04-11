@@ -100,16 +100,16 @@ export default function AboutPage() {
             objectFit: "cover",
           }}
         >
-          <source src="/hero-asia-mobile.mp4" media="(max-width: 767px)" type="video/mp4" />
-          <source src="/hero-asia.mp4" type="video/mp4" />
+          <source
+            src="https://pub-4bb9524bd21248d2ac34348d996317e9.r2.dev/videos/clip14-preview.mp4"
+            media="(max-width: 767px)"
+            type="video/mp4"
+          />
+          <source
+            src="https://pub-4bb9524bd21248d2ac34348d996317e9.r2.dev/videos/clip14.mp4"
+            type="video/mp4"
+          />
         </video>
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            backgroundColor: "rgba(0,0,0,0.45)",
-          }}
-        />
         <div
           style={{
             position: "absolute",
@@ -119,6 +119,9 @@ export default function AboutPage() {
             textAlign: "center",
             width: "90%",
             maxWidth: 700,
+            padding: "40px 20px",
+            background:
+              "radial-gradient(ellipse at center, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.15) 55%, rgba(0,0,0,0) 80%)",
           }}
         >
           <p
@@ -130,6 +133,7 @@ export default function AboutPage() {
               fontFamily: "var(--font-dm-sans), sans-serif",
               fontWeight: 300,
               marginBottom: "1.25rem",
+              textShadow: "0 2px 20px rgba(0,0,0,0.8)",
             }}
           >
             About
@@ -140,7 +144,7 @@ export default function AboutPage() {
               fontWeight: 300,
               color: "#ede8df",
               lineHeight: 1.15,
-              textShadow: "0 2px 20px rgba(0,0,0,0.5)",
+              textShadow: "0 2px 20px rgba(0,0,0,0.8)",
             }}
           >
             The art of{" "}
@@ -149,13 +153,6 @@ export default function AboutPage() {
             </em>
             . Never masking.
           </h1>
-          <Image
-            src="/daniela-logo-final.png"
-            alt="Daniela Cioara"
-            width={120}
-            height={54}
-            style={{ objectFit: "contain", opacity: 0.85, marginTop: "16px" }}
-          />
         </div>
       </section>
 
