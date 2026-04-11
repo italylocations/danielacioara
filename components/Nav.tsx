@@ -92,7 +92,7 @@ export default function Nav() {
             style={{ alignItems: "center", gap: "2.5rem" }}
           >
             <a
-              href="/#work"
+              href="/#portfolio"
               style={desktopLinkStyle}
               onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "#ede8df")}
               onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(237,232,223,0.65)")}
@@ -218,7 +218,7 @@ export default function Nav() {
         }}
       >
         <a
-          href="/#work"
+          href="/#portfolio"
           onClick={closeMenu}
           className="font-cormorant"
           style={mobileLinkStyle}
