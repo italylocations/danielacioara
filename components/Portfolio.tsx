@@ -58,17 +58,11 @@ function PhotoCell({ file, onClick }: { file: string; onClick: () => void }) {
 /* ── Video cell ──────────────────────────────────────────────────────────── */
 function VideoCell({
   clip,
-  playingFull,
   onToggle,
 }: {
   clip: string;
-  playingFull: boolean;
   onToggle: () => void;
 }) {
-  const src = playingFull
-    ? `${R2}/videos/${clip}.mp4`
-    : `${R2}/videos/${clip}-preview.mp4`;
-
   return (
     <div onClick={onToggle} className="pf-cell pf-video">
       <span className="corner corner-tl" />
@@ -76,7 +70,6 @@ function VideoCell({
       <span className="corner corner-bl" />
       <span className="corner corner-br" />
       <video
-        key={src}
         autoPlay
         muted
         loop
@@ -88,13 +81,11 @@ function VideoCell({
           display: "block",
         }}
       >
-        <source src={src} type="video/mp4" />
+        <source src={`${R2}/videos/${clip}-preview.mp4`} type="video/mp4" />
       </video>
-      {!playingFull && (
-        <div className="pf-play">
-          <span className="pf-play-triangle" />
-        </div>
-      )}
+      <div className="pf-play">
+        <span className="pf-play-triangle" />
+      </div>
     </div>
   );
 }
@@ -103,9 +94,8 @@ function VideoCell({
 export default function Portfolio() {
   const { t } = useLanguage();
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  const [playingFull, setPlayingFull] = useState<Record<string, boolean>>({});
 
-  // Mobile video modal state
+  // Video modal state
   const [modalClip, setModalClip] = useState<string | null>(null);
   const [modalIndex, setModalIndex] = useState<number>(0);
 
@@ -141,14 +131,10 @@ export default function Portfolio() {
     []
   );
 
-  const toggleVideo = useCallback((clip: string) => {
-    if (window.innerWidth < 768) {
-      const idx = VIDEO_CLIPS.indexOf(clip);
-      setModalIndex(idx);
-      setModalClip(clip);
-    } else {
-      setPlayingFull((prev) => ({ ...prev, [clip]: !prev[clip] }));
-    }
+  const openVideoModal = useCallback((clip: string) => {
+    const idx = VIDEO_CLIPS.indexOf(clip);
+    setModalIndex(idx);
+    setModalClip(clip);
   }, []);
 
   const navigateModal = useCallback((direction: number) => {
@@ -158,6 +144,18 @@ export default function Portfolio() {
       return newIdx;
     });
   }, []);
+
+  // Keyboard: ESC to close, ArrowLeft/Right to navigate
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (!modalClip) return;
+      if (e.key === "Escape") setModalClip(null);
+      if (e.key === "ArrowLeft") navigateModal(-1);
+      if (e.key === "ArrowRight") navigateModal(1);
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [modalClip, navigateModal]);
 
   return (
     <>
@@ -215,8 +213,7 @@ export default function Portfolio() {
                   <VideoCell
                     key={clip}
                     clip={clip}
-                    playingFull={!!playingFull[clip]}
-                    onToggle={() => toggleVideo(clip)}
+                    onToggle={() => openVideoModal(clip)}
                   />
                 ))}
               </div>
@@ -235,119 +232,52 @@ export default function Portfolio() {
         />
       )}
 
-      {/* Mobile video modal */}
+      {/* Video modal */}
       {modalClip && (
         <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            zIndex: 9999,
-            background: "#000",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
+          className="vm-overlay"
+          onClick={(e) => { if (e.target === e.currentTarget) setModalClip(null); }}
         >
-          <video
-            key={modalClip}
-            autoPlay
-            muted
-            loop
-            playsInline
-            style={{ width: "100%", height: "100%", objectFit: "contain" }}
-          >
-            <source src={`${R2}/videos/${modalClip}.mp4`} type="video/mp4" />
-          </video>
-
-          {/* Close */}
+          {/* Previous — outside video on desktop */}
           <button
-            onClick={() => setModalClip(null)}
-            style={{
-              position: "absolute",
-              top: 16,
-              right: 16,
-              width: 44,
-              height: 44,
-              borderRadius: "50%",
-              background: "rgba(0,0,0,0.7)",
-              border: "1.5px solid rgba(201,163,82,0.6)",
-              color: "#C9A874",
-              fontSize: 20,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              zIndex: 10000,
-              cursor: "pointer",
-              padding: 0,
-            }}
-          >
-            &#10005;
-          </button>
-
-          {/* Previous */}
-          <button
+            className="vm-btn vm-prev"
             onClick={() => navigateModal(-1)}
-            style={{
-              position: "absolute",
-              top: "50%",
-              left: 16,
-              transform: "translateY(-50%)",
-              width: 44,
-              height: 44,
-              borderRadius: "50%",
-              background: "rgba(0,0,0,0.7)",
-              border: "1.5px solid rgba(201,163,82,0.6)",
-              color: "#C9A874",
-              fontSize: 20,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              zIndex: 10000,
-              cursor: "pointer",
-              padding: 0,
-            }}
           >
             &#8249;
           </button>
 
-          {/* Next */}
+          {/* Video container */}
+          <div className="vm-container">
+            <video
+              key={modalClip}
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="vm-video"
+            >
+              <source src={`${R2}/videos/${modalClip}.mp4`} type="video/mp4" />
+            </video>
+
+            {/* Close — top-right of container */}
+            <button
+              className="vm-btn vm-close"
+              onClick={() => setModalClip(null)}
+            >
+              &#10005;
+            </button>
+          </div>
+
+          {/* Next — outside video on desktop */}
           <button
+            className="vm-btn vm-next"
             onClick={() => navigateModal(1)}
-            style={{
-              position: "absolute",
-              top: "50%",
-              right: 16,
-              transform: "translateY(-50%)",
-              width: 44,
-              height: 44,
-              borderRadius: "50%",
-              background: "rgba(0,0,0,0.7)",
-              border: "1.5px solid rgba(201,163,82,0.6)",
-              color: "#C9A874",
-              fontSize: 20,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              zIndex: 10000,
-              cursor: "pointer",
-              padding: 0,
-            }}
           >
             &#8250;
           </button>
 
           {/* Position indicator */}
-          <div
-            style={{
-              position: "absolute",
-              bottom: 20,
-              left: "50%",
-              transform: "translateX(-50%)",
-              color: "rgba(201,163,82,0.6)",
-              fontSize: 11,
-              letterSpacing: "0.15em",
-            }}
-          >
+          <div className="vm-indicator">
             {modalIndex + 1} / {VIDEO_CLIPS.length}
           </div>
         </div>
@@ -434,6 +364,72 @@ export default function Portfolio() {
           border-bottom: 9px solid transparent;
         }
 
+        /* ── Video modal ─────────────────────────────────── */
+        .vm-overlay {
+          position: fixed;
+          inset: 0;
+          z-index: 9999;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(0,0,0,0.92);
+          backdrop-filter: blur(6px);
+          -webkit-backdrop-filter: blur(6px);
+        }
+        .vm-container {
+          position: relative;
+          width: 90vw;
+          max-width: 900px;
+          max-height: 80vh;
+          aspect-ratio: 16 / 9;
+          border: 2px solid transparent;
+          border-image: linear-gradient(105deg,#6B4F1A,#C9A352,#F5D98B,#C9A352,#7A5520) 1;
+        }
+        .vm-video {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          display: block;
+          background: #000;
+        }
+        .vm-btn {
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          background: rgba(0,0,0,0.7);
+          border: 1.5px solid rgba(201,163,82,0.6);
+          color: #C9A874;
+          font-size: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          padding: 0;
+          line-height: 1;
+          z-index: 10000;
+          flex-shrink: 0;
+        }
+        .vm-prev {
+          margin-right: 20px;
+        }
+        .vm-next {
+          margin-left: 20px;
+        }
+        .vm-close {
+          position: absolute;
+          top: -54px;
+          right: 0;
+        }
+        .vm-indicator {
+          position: absolute;
+          bottom: 20px;
+          left: 50%;
+          transform: translateX(-50%);
+          color: rgba(201,163,82,0.6);
+          font-size: 11px;
+          letter-spacing: 0.15em;
+        }
+
         @media (max-width: 767px) {
           .portfolio-section { padding: 32px 20px; }
           .portfolio-header  { margin-bottom: 1.5rem; }
@@ -444,6 +440,43 @@ export default function Portfolio() {
           .pf-row-videos {
             grid-template-columns: 1fr;
             overflow-x: visible;
+          }
+
+          .vm-overlay {
+            background: #000;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+          }
+          .vm-container {
+            width: 100%;
+            max-width: none;
+            max-height: none;
+            height: 100%;
+            aspect-ratio: auto;
+            border: none;
+            border-image: none;
+          }
+          .vm-video {
+            object-fit: contain;
+          }
+          .vm-prev {
+            position: absolute;
+            top: 50%;
+            left: 16px;
+            transform: translateY(-50%);
+            margin: 0;
+          }
+          .vm-next {
+            position: absolute;
+            top: 50%;
+            right: 16px;
+            transform: translateY(-50%);
+            margin: 0;
+          }
+          .vm-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
           }
         }
       `}</style>
