@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Lightbox from "@/components/Lightbox";
 
@@ -25,6 +25,9 @@ const ROWS: Row[] = [
 
 // Flattened list of photos (for Lightbox index mapping)
 const PHOTOS: string[] = ROWS.flatMap((r) => (r.kind === "photos" ? r.files : []));
+
+// Flattened list of clips (for fullscreen navigation)
+const ALL_CLIPS: string[] = ROWS.flatMap((r) => (r.kind === "videos" ? r.clips : []));
 
 /* ── Photo cell ──────────────────────────────────────────────────────────── */
 function PhotoCell({ file, onClick }: { file: string; onClick: () => void }) {
@@ -102,6 +105,33 @@ export default function Portfolio() {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [playingFull, setPlayingFull] = useState<Record<string, boolean>>({});
   const videoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
+  const [fullscreenClip, setFullscreenClip] = useState<string | null>(null);
+
+  // Listen for fullscreen exit (back gesture on Android, ESC, etc.)
+  useEffect(() => {
+    const onFsChange = () => {
+      const fsEl = document.fullscreenElement || (document as any).webkitFullscreenElement;
+      if (!fsEl) {
+        setFullscreenClip((prev) => {
+          if (prev) {
+            const video = videoRefs.current[prev];
+            if (video) {
+              video.src = `${R2}/videos/${prev}-preview.mp4`;
+              video.load();
+              video.play();
+            }
+          }
+          return null;
+        });
+      }
+    };
+    document.addEventListener("fullscreenchange", onFsChange);
+    document.addEventListener("webkitfullscreenchange", onFsChange);
+    return () => {
+      document.removeEventListener("fullscreenchange", onFsChange);
+      document.removeEventListener("webkitfullscreenchange", onFsChange);
+    };
+  }, []);
 
   const images = PHOTOS.map((file) => ({
     src: `${R2}/portfolio/${file}`,
@@ -125,6 +155,24 @@ export default function Portfolio() {
     []
   );
 
+  const enterFullscreen = useCallback((video: HTMLVideoElement) => {
+    if (video.requestFullscreen) {
+      video.requestFullscreen();
+    } else if ((video as any).webkitRequestFullscreen) {
+      (video as any).webkitRequestFullscreen();
+    } else if ((video as any).webkitEnterFullscreen) {
+      (video as any).webkitEnterFullscreen();
+    }
+  }, []);
+
+  const exitFullscreen = useCallback(() => {
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    } else if ((document as any).webkitFullscreenElement) {
+      (document as any).webkitExitFullscreen();
+    }
+  }, []);
+
   const toggleVideo = useCallback((clip: string) => {
     if (window.innerWidth < 768) {
       const video = videoRefs.current[clip];
@@ -132,17 +180,46 @@ export default function Portfolio() {
       video.src = `${R2}/videos/${clip}.mp4`;
       video.load();
       video.play();
-      if (video.requestFullscreen) {
-        video.requestFullscreen();
-      } else if ((video as any).webkitRequestFullscreen) {
-        (video as any).webkitRequestFullscreen();
-      } else if ((video as any).webkitEnterFullscreen) {
-        (video as any).webkitEnterFullscreen();
-      }
+      setFullscreenClip(clip);
+      enterFullscreen(video);
     } else {
       setPlayingFull((prev) => ({ ...prev, [clip]: !prev[clip] }));
     }
-  }, []);
+  }, [enterFullscreen]);
+
+  const navigateFullscreen = useCallback((direction: -1 | 1) => {
+    setFullscreenClip((prev) => {
+      if (!prev) return null;
+      const idx = ALL_CLIPS.indexOf(prev);
+      if (idx === -1) return prev;
+      const nextIdx = (idx + direction + ALL_CLIPS.length) % ALL_CLIPS.length;
+      const nextClip = ALL_CLIPS[nextIdx];
+
+      // Exit fullscreen on current, switch source, re-enter on next
+      const prevVideo = videoRefs.current[prev];
+      if (prevVideo) {
+        prevVideo.src = `${R2}/videos/${prev}-preview.mp4`;
+        prevVideo.load();
+        prevVideo.play();
+      }
+
+      // We need to exit then re-enter fullscreen on the new video
+      exitFullscreen();
+
+      // Small delay to let exit complete, then enter new fullscreen
+      setTimeout(() => {
+        const nextVideo = videoRefs.current[nextClip];
+        if (nextVideo) {
+          nextVideo.src = `${R2}/videos/${nextClip}.mp4`;
+          nextVideo.load();
+          nextVideo.play();
+          enterFullscreen(nextVideo);
+        }
+      }, 100);
+
+      return nextClip;
+    });
+  }, [enterFullscreen, exitFullscreen]);
 
   return (
     <>
@@ -219,6 +296,32 @@ export default function Portfolio() {
           onPrev={goPrev}
           onNext={goNext}
         />
+      )}
+
+      {fullscreenClip && (
+        <div className="pf-fs-overlay">
+          <button
+            className="pf-fs-btn pf-fs-prev"
+            onClick={() => navigateFullscreen(-1)}
+            aria-label="Previous video"
+          >
+            &#8592;
+          </button>
+          <button
+            className="pf-fs-btn pf-fs-next"
+            onClick={() => navigateFullscreen(1)}
+            aria-label="Next video"
+          >
+            &#8594;
+          </button>
+          <button
+            className="pf-fs-btn pf-fs-close"
+            onClick={exitFullscreen}
+            aria-label="Exit fullscreen"
+          >
+            &#10005;
+          </button>
+        </div>
       )}
 
       <style>{`
@@ -302,7 +405,37 @@ export default function Portfolio() {
           border-bottom: 9px solid transparent;
         }
 
+        .pf-fs-overlay {
+          position: fixed;
+          inset: 0;
+          z-index: 9999;
+          pointer-events: none;
+          display: none;
+        }
+        .pf-fs-btn {
+          pointer-events: auto;
+          position: absolute;
+          top: 16px;
+          width: 44px;
+          height: 44px;
+          background: rgba(0,0,0,0.6);
+          border: 1px solid rgba(201,163,82,0.5);
+          border-radius: 50%;
+          color: #C9A874;
+          font-size: 18px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          padding: 0;
+          line-height: 1;
+        }
+        .pf-fs-prev  { left: 16px; }
+        .pf-fs-next  { right: 68px; }
+        .pf-fs-close { right: 16px; }
+
         @media (max-width: 767px) {
+          .pf-fs-overlay { display: block; }
           .portfolio-section { padding: 32px 20px; }
           .portfolio-header  { margin-bottom: 1.5rem; }
 
