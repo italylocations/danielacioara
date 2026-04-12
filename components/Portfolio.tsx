@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Lightbox from "@/components/Lightbox";
 
@@ -54,10 +54,12 @@ function VideoCell({
   clip,
   playingFull,
   onToggle,
+  videoRef,
 }: {
   clip: string;
   playingFull: boolean;
   onToggle: () => void;
+  videoRef: (el: HTMLVideoElement | null) => void;
 }) {
   const src = playingFull
     ? `${R2}/videos/${clip}.mp4`
@@ -70,6 +72,7 @@ function VideoCell({
       <span className="corner corner-bl" />
       <span className="corner corner-br" />
       <video
+        ref={videoRef}
         key={src}
         autoPlay
         muted
@@ -98,6 +101,7 @@ export default function Portfolio() {
   const { t } = useLanguage();
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [playingFull, setPlayingFull] = useState<Record<string, boolean>>({});
+  const videoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
 
   const images = PHOTOS.map((file) => ({
     src: `${R2}/portfolio/${file}`,
@@ -122,7 +126,22 @@ export default function Portfolio() {
   );
 
   const toggleVideo = useCallback((clip: string) => {
-    setPlayingFull((prev) => ({ ...prev, [clip]: !prev[clip] }));
+    if (window.innerWidth < 768) {
+      const video = videoRefs.current[clip];
+      if (!video) return;
+      video.src = `${R2}/videos/${clip}.mp4`;
+      video.load();
+      video.play();
+      if (video.requestFullscreen) {
+        video.requestFullscreen();
+      } else if ((video as any).webkitRequestFullscreen) {
+        (video as any).webkitRequestFullscreen();
+      } else if ((video as any).webkitEnterFullscreen) {
+        (video as any).webkitEnterFullscreen();
+      }
+    } else {
+      setPlayingFull((prev) => ({ ...prev, [clip]: !prev[clip] }));
+    }
   }, []);
 
   return (
@@ -183,6 +202,7 @@ export default function Portfolio() {
                     clip={clip}
                     playingFull={!!playingFull[clip]}
                     onToggle={() => toggleVideo(clip)}
+                    videoRef={(el) => { videoRefs.current[clip] = el; }}
                   />
                 ))}
               </div>
