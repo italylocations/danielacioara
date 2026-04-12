@@ -9,13 +9,15 @@ const R2 = "https://pub-4bb9524bd21248d2ac34348d996317e9.r2.dev";
 /* ── Data ────────────────────────────────────────────────────────────────── */
 type Row =
   | { kind: "photos"; files: [string, string] }
-  | { kind: "videos"; clips: [string, string, string] };
+  | { kind: "videos"; clips: [string, string, string] }
+  | { kind: "vertical"; clips: [string, string] };
 
 const ROWS: Row[] = [
   { kind: "photos", files: ["daniela-cioara-makeup-16.jpg", "daniela-cioara-makeup-7.jpg"] },
   { kind: "videos", clips: ["clip6", "clip10", "clip1"] },
   { kind: "photos", files: ["daniela-cioara-makeup-1.jpg", "daniela-cioara-makeup-6.jpg"] },
   { kind: "videos", clips: ["clip5", "clip7", "clip12"] },
+  { kind: "vertical", clips: ["clip17", "clip18"] },
   { kind: "photos", files: ["daniela-cioara-makeup-2.jpg", "daniela-cioara-makeup-24.jpg"] },
   { kind: "videos", clips: ["clip15", "clip9", "clip4"] },
   { kind: "photos", files: ["daniela-cioara-makeup-25.jpg", "daniela-cioara-makeup-17.jpg"] },
@@ -26,9 +28,12 @@ const ROWS: Row[] = [
 // Flattened list of photos (for Lightbox index mapping)
 const PHOTOS: string[] = ROWS.flatMap((r) => (r.kind === "photos" ? r.files : []));
 
+const VERTICAL_CLIPS = new Set(["clip17", "clip18"]);
+
 // Flattened list of clips (for modal navigation)
 const VIDEO_CLIPS: string[] = [
   "clip6","clip10","clip1","clip5","clip7","clip12",
+  "clip17","clip18",
   "clip15","clip9","clip4","clip2","clip8","clip16",
 ];
 
@@ -207,6 +212,41 @@ export default function Portfolio() {
                 </div>
               );
             }
+            if (row.kind === "vertical") {
+              return (
+                <div key={`row-${rowIdx}`} className="pf-row-vertical">
+                  {row.clips.map((clip) => (
+                    <div
+                      key={clip}
+                      onClick={() => openVideoModal(clip)}
+                      className="pf-cell pf-vertical"
+                    >
+                      <span className="corner corner-tl" />
+                      <span className="corner corner-tr" />
+                      <span className="corner corner-bl" />
+                      <span className="corner corner-br" />
+                      <video
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                          display: "block",
+                        }}
+                      >
+                        <source src={`${R2}/videos/${clip}-preview.mp4`} type="video/mp4" />
+                      </video>
+                      <div className="pf-play">
+                        <span className="pf-play-triangle" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              );
+            }
             return (
               <div key={`row-${rowIdx}`} className="pf-row-videos">
                 {row.clips.map((clip) => (
@@ -247,7 +287,7 @@ export default function Portfolio() {
           </button>
 
           {/* Video container */}
-          <div className="vm-container">
+          <div className={`vm-container${VERTICAL_CLIPS.has(modalClip) ? " vm-vertical" : ""}`}>
             <video
               key={modalClip}
               autoPlay
@@ -320,6 +360,14 @@ export default function Portfolio() {
         }
         .pf-photo { aspect-ratio: 4 / 5; }
         .pf-video { aspect-ratio: 16 / 9; }
+        .pf-vertical { aspect-ratio: 9 / 16; }
+
+        .pf-row-vertical {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 10px;
+          margin-bottom: 10px;
+        }
 
         .pf-video:hover {
           border-image: linear-gradient(
@@ -429,6 +477,12 @@ export default function Portfolio() {
           font-size: 11px;
           letter-spacing: 0.15em;
         }
+        .vm-vertical {
+          width: auto;
+          max-width: none;
+          max-height: 85vh;
+          aspect-ratio: 9 / 16;
+        }
 
         @media (max-width: 767px) {
           .portfolio-section { padding: 32px 20px; }
@@ -440,6 +494,17 @@ export default function Portfolio() {
           .pf-row-videos {
             grid-template-columns: 1fr;
             overflow-x: visible;
+          }
+          .pf-row-vertical {
+            grid-template-columns: 1fr;
+          }
+
+          .vm-vertical {
+            width: 100%;
+            max-width: none;
+            max-height: none;
+            height: 100%;
+            aspect-ratio: auto;
           }
 
           .vm-overlay {
