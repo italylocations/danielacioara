@@ -290,11 +290,9 @@ export default function Portfolio() {
             grid-template-columns: 1fr 1fr;
           }
           .pf-row-videos {
-            grid-template-columns: repeat(3, minmax(160px, 1fr));
-            overflow-x: auto;
-            scrollbar-width: none;
+            grid-template-columns: 1fr;
+            overflow-x: visible;
           }
-          .pf-row-videos::-webkit-scrollbar { display: none; }
         }
       `}</style>
     </>
