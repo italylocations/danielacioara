@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Lightbox from "@/components/Lightbox";
 
@@ -26,8 +26,11 @@ const ROWS: Row[] = [
 // Flattened list of photos (for Lightbox index mapping)
 const PHOTOS: string[] = ROWS.flatMap((r) => (r.kind === "photos" ? r.files : []));
 
-// Flattened list of clips (for fullscreen navigation)
-const ALL_CLIPS: string[] = ROWS.flatMap((r) => (r.kind === "videos" ? r.clips : []));
+// Flattened list of clips (for modal navigation)
+const VIDEO_CLIPS: string[] = [
+  "clip6","clip10","clip1","clip5","clip7","clip12",
+  "clip15","clip9","clip4","clip2","clip8","clip16",
+];
 
 /* ── Photo cell ──────────────────────────────────────────────────────────── */
 function PhotoCell({ file, onClick }: { file: string; onClick: () => void }) {
@@ -57,12 +60,10 @@ function VideoCell({
   clip,
   playingFull,
   onToggle,
-  videoRef,
 }: {
   clip: string;
   playingFull: boolean;
   onToggle: () => void;
-  videoRef: (el: HTMLVideoElement | null) => void;
 }) {
   const src = playingFull
     ? `${R2}/videos/${clip}.mp4`
@@ -75,7 +76,6 @@ function VideoCell({
       <span className="corner corner-bl" />
       <span className="corner corner-br" />
       <video
-        ref={videoRef}
         key={src}
         autoPlay
         muted
@@ -104,34 +104,20 @@ export default function Portfolio() {
   const { t } = useLanguage();
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [playingFull, setPlayingFull] = useState<Record<string, boolean>>({});
-  const videoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
-  const [fullscreenClip, setFullscreenClip] = useState<string | null>(null);
 
-  // Listen for fullscreen exit (back gesture on Android, ESC, etc.)
+  // Mobile video modal state
+  const [modalClip, setModalClip] = useState<string | null>(null);
+  const [modalIndex, setModalIndex] = useState<number>(0);
+
+  // Block body scroll when modal is open
   useEffect(() => {
-    const onFsChange = () => {
-      const fsEl = document.fullscreenElement || (document as any).webkitFullscreenElement;
-      if (!fsEl) {
-        setFullscreenClip((prev) => {
-          if (prev) {
-            const video = videoRefs.current[prev];
-            if (video) {
-              video.src = `${R2}/videos/${prev}-preview.mp4`;
-              video.load();
-              video.play();
-            }
-          }
-          return null;
-        });
-      }
-    };
-    document.addEventListener("fullscreenchange", onFsChange);
-    document.addEventListener("webkitfullscreenchange", onFsChange);
-    return () => {
-      document.removeEventListener("fullscreenchange", onFsChange);
-      document.removeEventListener("webkitfullscreenchange", onFsChange);
-    };
-  }, []);
+    if (modalClip) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [modalClip]);
 
   const images = PHOTOS.map((file) => ({
     src: `${R2}/portfolio/${file}`,
@@ -155,71 +141,23 @@ export default function Portfolio() {
     []
   );
 
-  const enterFullscreen = useCallback((video: HTMLVideoElement) => {
-    if (video.requestFullscreen) {
-      video.requestFullscreen();
-    } else if ((video as any).webkitRequestFullscreen) {
-      (video as any).webkitRequestFullscreen();
-    } else if ((video as any).webkitEnterFullscreen) {
-      (video as any).webkitEnterFullscreen();
-    }
-  }, []);
-
-  const exitFullscreen = useCallback(() => {
-    if (document.fullscreenElement) {
-      document.exitFullscreen();
-    } else if ((document as any).webkitFullscreenElement) {
-      (document as any).webkitExitFullscreen();
-    }
-  }, []);
-
   const toggleVideo = useCallback((clip: string) => {
     if (window.innerWidth < 768) {
-      const video = videoRefs.current[clip];
-      if (!video) return;
-      video.src = `${R2}/videos/${clip}.mp4`;
-      video.load();
-      video.play();
-      setFullscreenClip(clip);
-      enterFullscreen(video);
+      const idx = VIDEO_CLIPS.indexOf(clip);
+      setModalIndex(idx);
+      setModalClip(clip);
     } else {
       setPlayingFull((prev) => ({ ...prev, [clip]: !prev[clip] }));
     }
-  }, [enterFullscreen]);
+  }, []);
 
-  const navigateFullscreen = useCallback((direction: -1 | 1) => {
-    setFullscreenClip((prev) => {
-      if (!prev) return null;
-      const idx = ALL_CLIPS.indexOf(prev);
-      if (idx === -1) return prev;
-      const nextIdx = (idx + direction + ALL_CLIPS.length) % ALL_CLIPS.length;
-      const nextClip = ALL_CLIPS[nextIdx];
-
-      // Exit fullscreen on current, switch source, re-enter on next
-      const prevVideo = videoRefs.current[prev];
-      if (prevVideo) {
-        prevVideo.src = `${R2}/videos/${prev}-preview.mp4`;
-        prevVideo.load();
-        prevVideo.play();
-      }
-
-      // We need to exit then re-enter fullscreen on the new video
-      exitFullscreen();
-
-      // Small delay to let exit complete, then enter new fullscreen
-      setTimeout(() => {
-        const nextVideo = videoRefs.current[nextClip];
-        if (nextVideo) {
-          nextVideo.src = `${R2}/videos/${nextClip}.mp4`;
-          nextVideo.load();
-          nextVideo.play();
-          enterFullscreen(nextVideo);
-        }
-      }, 100);
-
-      return nextClip;
+  const navigateModal = useCallback((direction: number) => {
+    setModalIndex((prev) => {
+      const newIdx = (prev + direction + VIDEO_CLIPS.length) % VIDEO_CLIPS.length;
+      setModalClip(VIDEO_CLIPS[newIdx]);
+      return newIdx;
     });
-  }, [enterFullscreen, exitFullscreen]);
+  }, []);
 
   return (
     <>
@@ -279,7 +217,6 @@ export default function Portfolio() {
                     clip={clip}
                     playingFull={!!playingFull[clip]}
                     onToggle={() => toggleVideo(clip)}
-                    videoRef={(el) => { videoRefs.current[clip] = el; }}
                   />
                 ))}
               </div>
@@ -298,29 +235,121 @@ export default function Portfolio() {
         />
       )}
 
-      {fullscreenClip && (
-        <div className="pf-fs-overlay">
-          <button
-            className="pf-fs-btn pf-fs-prev"
-            onClick={() => navigateFullscreen(-1)}
-            aria-label="Previous video"
+      {/* Mobile video modal */}
+      {modalClip && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 9999,
+            background: "#000",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <video
+            key={modalClip}
+            autoPlay
+            muted
+            loop
+            playsInline
+            style={{ width: "100%", height: "100%", objectFit: "contain" }}
           >
-            &#8592;
-          </button>
+            <source src={`${R2}/videos/${modalClip}.mp4`} type="video/mp4" />
+          </video>
+
+          {/* Close */}
           <button
-            className="pf-fs-btn pf-fs-next"
-            onClick={() => navigateFullscreen(1)}
-            aria-label="Next video"
-          >
-            &#8594;
-          </button>
-          <button
-            className="pf-fs-btn pf-fs-close"
-            onClick={exitFullscreen}
-            aria-label="Exit fullscreen"
+            onClick={() => setModalClip(null)}
+            style={{
+              position: "absolute",
+              top: 16,
+              right: 16,
+              width: 44,
+              height: 44,
+              borderRadius: "50%",
+              background: "rgba(0,0,0,0.7)",
+              border: "1.5px solid rgba(201,163,82,0.6)",
+              color: "#C9A874",
+              fontSize: 20,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 10000,
+              cursor: "pointer",
+              padding: 0,
+            }}
           >
             &#10005;
           </button>
+
+          {/* Previous */}
+          <button
+            onClick={() => navigateModal(-1)}
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: 16,
+              transform: "translateY(-50%)",
+              width: 44,
+              height: 44,
+              borderRadius: "50%",
+              background: "rgba(0,0,0,0.7)",
+              border: "1.5px solid rgba(201,163,82,0.6)",
+              color: "#C9A874",
+              fontSize: 20,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 10000,
+              cursor: "pointer",
+              padding: 0,
+            }}
+          >
+            &#8249;
+          </button>
+
+          {/* Next */}
+          <button
+            onClick={() => navigateModal(1)}
+            style={{
+              position: "absolute",
+              top: "50%",
+              right: 16,
+              transform: "translateY(-50%)",
+              width: 44,
+              height: 44,
+              borderRadius: "50%",
+              background: "rgba(0,0,0,0.7)",
+              border: "1.5px solid rgba(201,163,82,0.6)",
+              color: "#C9A874",
+              fontSize: 20,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 10000,
+              cursor: "pointer",
+              padding: 0,
+            }}
+          >
+            &#8250;
+          </button>
+
+          {/* Position indicator */}
+          <div
+            style={{
+              position: "absolute",
+              bottom: 20,
+              left: "50%",
+              transform: "translateX(-50%)",
+              color: "rgba(201,163,82,0.6)",
+              fontSize: 11,
+              letterSpacing: "0.15em",
+            }}
+          >
+            {modalIndex + 1} / {VIDEO_CLIPS.length}
+          </div>
         </div>
       )}
 
@@ -405,37 +434,7 @@ export default function Portfolio() {
           border-bottom: 9px solid transparent;
         }
 
-        .pf-fs-overlay {
-          position: fixed;
-          inset: 0;
-          z-index: 9999;
-          pointer-events: none;
-          display: none;
-        }
-        .pf-fs-btn {
-          pointer-events: auto;
-          position: absolute;
-          top: 16px;
-          width: 44px;
-          height: 44px;
-          background: rgba(0,0,0,0.6);
-          border: 1px solid rgba(201,163,82,0.5);
-          border-radius: 50%;
-          color: #C9A874;
-          font-size: 18px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          padding: 0;
-          line-height: 1;
-        }
-        .pf-fs-prev  { left: 16px; }
-        .pf-fs-next  { right: 68px; }
-        .pf-fs-close { right: 16px; }
-
         @media (max-width: 767px) {
-          .pf-fs-overlay { display: block; }
           .portfolio-section { padding: 32px 20px; }
           .portfolio-header  { margin-bottom: 1.5rem; }
 
