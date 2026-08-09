@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+Disallow: /feed/
+Disallow: /comments/
+Disallow: /wp-content/
+Disallow: /draw-ey2i/
+Disallow: /*?hfu=
+
+Sitemap: https://danielacioara.com/sitemap.xml
