@@ -7,6 +7,7 @@ const DESCRIPTION = "Cookie policy of danielacioara.com.";
 
 export const metadata: Metadata = {
   title: TITLE,
+  robots: { index: false },
   ...socialMetadata({
     title: TITLE,
     description: DESCRIPTION,
