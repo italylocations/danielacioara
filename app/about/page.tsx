@@ -1,14 +1,19 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import InnerPageNav from "@/components/InnerPageNav";
+import { socialMetadata } from "@/lib/seo";
 
 const R2 = process.env.NEXT_PUBLIC_R2_PUBLIC_URL ?? "";
 
-export const metadata = {
-  title: "About | Daniela Cioara — Makeup Artist Rome",
-  description:
-    "Makeup artist based in Rome with over 8 years of experience in commercial photography, fashion editorials and private sessions. Specialist in beauty and soft glam makeup for Italian and international clients.",
-  alternates: { canonical: "/about" },
+const TITLE = "About | Daniela Cioara — Makeup Artist Rome";
+const DESCRIPTION =
+  "Makeup artist based in Rome with over 8 years of experience in commercial photography, fashion editorials and private sessions. Specialist in beauty and soft glam makeup for Italian and international clients.";
+
+export const metadata: Metadata = {
+  title: TITLE,
+  description: DESCRIPTION,
+  ...socialMetadata({ title: TITLE, description: DESCRIPTION, path: "/about" }),
 };
 
 const BTS_IMAGES = [

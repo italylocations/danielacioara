@@ -10,9 +10,19 @@ import Journal from "@/components/Journal";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import { getAllPosts } from "@/lib/blog";
+import { socialMetadata } from "@/lib/seo";
+
+const TITLE = "Daniela Cioara | Makeup Artist Rome";
+const DESCRIPTION =
+  "Professional makeup artist based in Rome. Commercial, editorial, private sessions and destination weddings in Italy. Specialist in diverse skin tones and Asian beauty.";
 
 export const metadata: Metadata = {
-  alternates: { canonical: "/" },
+  ...socialMetadata({
+    title: TITLE,
+    description: DESCRIPTION,
+    path: "/",
+    imageAlt: "Daniela Cioara — Makeup Artist Rome",
+  }),
 };
 
 export default function HomePage() {

@@ -4,6 +4,7 @@ import { Cormorant_Garamond, DM_Sans } from "next/font/google";
 import "./globals.css";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import SplashScreen from "@/components/SplashScreen";
+import { SITE_URL } from "@/lib/seo";
 
 const cormorant = Cormorant_Garamond({
   weight: ["300", "400"],
@@ -19,8 +20,6 @@ const dmSans = DM_Sans({
   display: "swap",
   variable: "--font-dm-sans",
 });
-
-const SITE_URL = "https://danielacioara.com";
 
 export const metadata: Metadata = {
   title: "Daniela Cioara | Makeup Artist Rome",
@@ -43,29 +42,9 @@ export const metadata: Metadata = {
   ],
   icons: { icon: "/favicon.svg" },
   metadataBase: new URL(SITE_URL),
-  openGraph: {
-    title: "Daniela Cioara | Makeup Artist Rome",
-    description:
-      "Professional makeup artist based in Rome. Commercial, editorial, private sessions and destination weddings in Italy. Specialist in diverse skin tones and Asian beauty.",
-    url: "https://danielacioara.com",
-    siteName: "Daniela Cioara",
-    images: [
-      {
-        url: "https://danielacioara.com/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Daniela Cioara — Makeup Artist Rome",
-      },
-    ],
-    type: "website",
-    locale: "en_US",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Daniela Cioara | Makeup Artist Rome",
-    description: "Professional makeup artist in Rome",
-    images: ["https://danielacioara.com/og-image.jpg"],
-  },
+  // canonical, openGraph e twitter sono definiti per pagina via
+  // socialMetadata() in lib/seo.ts: qui verrebbero ereditati da tutte
+  // le route figlie, facendo dichiarare a ogni URL i dati della home.
   robots: {
     index: true,
     follow: true,

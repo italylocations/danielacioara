@@ -7,6 +7,7 @@ import { getPostBySlug, getAllPosts, formatDate } from "@/lib/blog";
 import VideoBreak from "@/components/VideoBreak";
 import BackToJournal from "@/components/BackToJournal";
 import InnerPageNav from "@/components/InnerPageNav";
+import { socialMetadata } from "@/lib/seo";
 import type { JSX } from "react";
 
 interface Props {
@@ -26,16 +27,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = getPostBySlug(slug);
   if (!post) return { title: "Not Found" };
 
+  const description = post.description ?? post.excerpt;
+
   return {
     title: `${post.title} — Journal — Daniela Cioara`,
-    description: post.description ?? post.excerpt,
-    alternates: { canonical: `/journal/${slug}` },
-    openGraph: {
+    description,
+    ...socialMetadata({
       title: post.title,
-      description: post.description ?? post.excerpt,
+      description,
+      path: `/journal/${slug}`,
+      image:
+        post.featuredImage && R2_BASE
+          ? `${R2_BASE}/portfolio/${post.featuredImage}`
+          : undefined,
       type: "article",
       publishedTime: post.date,
-    },
+    }),
   };
 }
 

@@ -3,12 +3,16 @@ import Link from "next/link";
 import Image from "next/image";
 import { getAllPosts } from "@/lib/blog";
 import InnerPageNav from "@/components/InnerPageNav";
+import { socialMetadata } from "@/lib/seo";
+
+const TITLE = "Journal — Daniela Cioara";
+const DESCRIPTION =
+  "Beauty insights, behind-the-scenes and editorial stories from Daniela Cioara, makeup artist in Rome.";
 
 export const metadata: Metadata = {
-  title: "Journal — Daniela Cioara",
-  description:
-    "Beauty insights, behind-the-scenes and editorial stories from Daniela Cioara, makeup artist in Rome.",
-  alternates: { canonical: "/journal" },
+  title: TITLE,
+  description: DESCRIPTION,
+  ...socialMetadata({ title: TITLE, description: DESCRIPTION, path: "/journal" }),
 };
 
 const R2_BASE = process.env.NEXT_PUBLIC_R2_PUBLIC_URL ?? "";

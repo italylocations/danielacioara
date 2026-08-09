@@ -1,9 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { socialMetadata } from "@/lib/seo";
+
+const TITLE = "Cookie Policy — Daniela Cioara";
+const DESCRIPTION = "Cookie policy of danielacioara.com.";
 
 export const metadata: Metadata = {
-  title: "Cookie Policy — Daniela Cioara",
-  alternates: { canonical: "/cookie-policy" },
+  title: TITLE,
+  ...socialMetadata({
+    title: TITLE,
+    description: DESCRIPTION,
+    path: "/cookie-policy",
+  }),
 };
 
 const h2Style: React.CSSProperties = {
