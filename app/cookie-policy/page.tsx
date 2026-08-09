@@ -3,6 +3,7 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Cookie Policy — Daniela Cioara",
+  alternates: { canonical: "/cookie-policy" },
 };
 
 const h2Style: React.CSSProperties = {

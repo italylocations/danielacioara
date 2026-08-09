@@ -43,7 +43,6 @@ export const metadata: Metadata = {
   ],
   icons: { icon: "/favicon.svg" },
   metadataBase: new URL(SITE_URL),
-  alternates: { canonical: "/" },
   openGraph: {
     title: "Daniela Cioara | Makeup Artist Rome",
     description:

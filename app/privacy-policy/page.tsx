@@ -3,6 +3,7 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Privacy Policy — Daniela Cioara",
+  alternates: { canonical: "/privacy-policy" },
 };
 
 const h2Style: React.CSSProperties = {

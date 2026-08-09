@@ -8,6 +8,7 @@ export const metadata = {
   title: "About | Daniela Cioara — Makeup Artist Rome",
   description:
     "Makeup artist based in Rome with over 8 years of experience in commercial photography, fashion editorials and private sessions. Specialist in beauty and soft glam makeup for Italian and international clients.",
+  alternates: { canonical: "/about" },
 };
 
 const BTS_IMAGES = [

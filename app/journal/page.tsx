@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "Journal — Daniela Cioara",
   description:
     "Beauty insights, behind-the-scenes and editorial stories from Daniela Cioara, makeup artist in Rome.",
+  alternates: { canonical: "/journal" },
 };
 
 const R2_BASE = process.env.NEXT_PUBLIC_R2_PUBLIC_URL ?? "";

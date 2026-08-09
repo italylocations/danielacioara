@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
@@ -9,6 +10,10 @@ import Journal from "@/components/Journal";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import { getAllPosts } from "@/lib/blog";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 export default function HomePage() {
   const posts = getAllPosts().slice(0, 3);
