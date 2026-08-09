@@ -10,6 +10,20 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: "/services",
+        destination: "/#services",
+        permanent: true,
+      },
+      {
+        source: "/about-daniela-cioara-makeup-artist",
+        destination: "/about",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
